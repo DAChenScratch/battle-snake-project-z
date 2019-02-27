@@ -13,7 +13,7 @@ export function sortedFood(data: BTData): Sorted[] {
         distance: 100000,
     };
     if (!data.board.food.length) {
-        return null;
+        return [];
     }
     const result = [];
     for (const food of data.board.food) {
