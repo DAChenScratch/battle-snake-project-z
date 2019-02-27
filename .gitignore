@@ -11,4 +11,5 @@ build/Release
 node_modules
 npm-debug.log
 public/bundle.js
+public/bundle.map.js
 dist/**/*.js
