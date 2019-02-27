@@ -1,66 +1,75 @@
-const bodyParser = require('body-parser')
-const express = require('express')
-const logger = require('morgan')
-const app = express()
+const bodyParser = require('body-parser');
+const express = require('express');
+const logger = require('morgan');
+const app = express();
 const {
-  fallbackHandler,
-  notFoundHandler,
-  genericErrorHandler,
-  poweredByHandler
-} = require('./handlers.js')
+    fallbackHandler,
+    notFoundHandler,
+    genericErrorHandler,
+    poweredByHandler
+} = require('./handlers.js');
 
-// For deployment to Heroku, the port needs to be set using ENV, so
-// we check for the port number in process.env
-app.set('port', (process.env.PORT || 9001))
+require('./lib');
 
-app.enable('verbose errors')
+app.set('port', (process.env.PORT || 9001));
 
-app.use(logger('dev'))
-app.use(bodyParser.json())
-app.use(poweredByHandler)
+app.enable('verbose errors');
 
-// --- SNAKE LOGIC GOES BELOW THIS LINE ---
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(poweredByHandler);
 
-// Handle POST request to '/start'
 app.post('/start', (request, response) => {
-  // NOTE: Do something here to start the game
+    log('start');
+    try {
+        writeFile(request.body, (json) => {
+            json.start = request.body;
+            json.moves = [];
+        });
+        // @todo random color
+        return response.json({
+            color: '#DFFF00',
+        });
+    } catch (e) {
+        console.error(e);
+    }
+});
 
-  // Response data
-  const data = {
-    color: '#DFFF00',
-  }
-
-  return response.json(data)
-})
-
-// Handle POST request to '/move'
 app.post('/move', (request, response) => {
-  // NOTE: Do something here to generate your move
-
-  // Response data
-  const data = {
-    move: 'up', // one of: ['up','down','left','right']
-  }
-
-  return response.json(data)
-})
+    log('move');
+    try {
+        writeFile(request.body, (json) => {
+            json.moves[request.body.turn] = request.body;
+        });
+        // log(request.body);
+        const directions = ['up', 'down', 'left', 'right'];
+        let direction;
+        direction = moveTowardsFood(request.body);
+        if (direction === undefined) {
+            direction = randomMove(request.body);
+        }
+        return response.json({
+            move: directions[direction],
+        });
+    } catch (e) {
+        console.error(e);
+    }
+});
 
 app.post('/end', (request, response) => {
-  // NOTE: Any cleanup when a game is complete.
-  return response.json({})
-})
+    log('end');
+    return response.json({})
+});
 
 app.post('/ping', (request, response) => {
-  // Used for checking if this snake is still alive.
-  return response.json({});
-})
+    log('ping');
+    return response.json({});
+});
 
-// --- SNAKE LOGIC GOES ABOVE THIS LINE ---
-
-app.use('*', fallbackHandler)
-app.use(notFoundHandler)
-app.use(genericErrorHandler)
+app.use('*', fallbackHandler);
+app.use(notFoundHandler);
+app.use(genericErrorHandler);
 
 app.listen(app.get('port'), () => {
-  console.log('Server listening on port %s', app.get('port'))
-})
+    console.log('Server listening on port %s', app.get('port'))
+});
