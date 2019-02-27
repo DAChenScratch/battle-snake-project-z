@@ -1,4 +1,9 @@
+const logging = false;
+
 export function log(...args: any[]) {
+    if (!logging) {
+        return;
+    }
     for (const arg of args) {
         if (typeof arg === 'string') {
             process.stdout.write(arg);
