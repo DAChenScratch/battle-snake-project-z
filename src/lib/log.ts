@@ -1,20 +1,24 @@
 const logging = false;
-
+export const logs = [];
 export function log(...args: any[]) {
     if (!logging) {
         return;
     }
+    let line = '';
     for (const arg of args) {
         if (typeof arg === 'string') {
-            process.stdout.write(arg);
-            process.stdout.write(' ');
+            line += arg;
+        } else if (arg === null) {
+            line += 'null';
+        } else if (arg === undefined) {
+            line += 'null';
         } else if (!isNaN(arg)) {
-            process.stdout.write(arg.toString());
-            process.stdout.write(' ');
+            line += arg.toString();
         } else {
-            process.stdout.write(JSON.stringify(arg, null, 4));
-            process.stdout.write(' ');
+            line += JSON.stringify(arg, null, 4);
         }
+        line += ' ';
     }
-    process.stdout.write('\n');
+    logs.push(line);
+    process.stdout.write(line + '\n');
 }

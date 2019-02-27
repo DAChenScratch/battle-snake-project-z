@@ -1,6 +1,6 @@
 import { gridDistance } from './gridDistance';
 import { log } from './log';
-import { weight } from './weight';
+import { weight, BLOCKED_THRESHOLD } from './weight';
 import { closestFood } from './closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from './sortedFood';
@@ -27,7 +27,7 @@ export function moveTowardsFoodPf(data: BTData) {
         costs[y] = [];
         for (var x = 0; x < data.board.width; x++) {
             const w = weight(data, x, y);
-            matrix[y][x] = w > 10 ? FREE : BLOCKED;
+            matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
             costs[y][x] = 100 - w;
         }
     }

@@ -19,14 +19,14 @@ export function isFree(data: BTData, x: number, y: number) {
                 return false;
             }
         }
-        if (snake.id != data.you.id) {
-            if (x >= snake.body[0].x - 1 &&
-                x <= snake.body[0].x + 1 &&
-                y >= snake.body[0].y - 1 &&
-                y <= snake.body[0].y + 1) {
-                return false;
-            }
-        }
+        // if (snake.id != data.you.id) {
+        //     if (x >= snake.body[0].x - 1 &&
+        //         x <= snake.body[0].x + 1 &&
+        //         y >= snake.body[0].y - 1 &&
+        //         y <= snake.body[0].y + 1) {
+        //         return false;
+        //     }
+        // }
     }
     return true;
 }

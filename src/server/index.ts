@@ -11,7 +11,7 @@ const {
 
 import { Request, Response } from 'express';
 
-import { log } from '../lib/log';
+import { log, logs } from '../lib/log';
 import { writeFile } from '../lib/writeFile';
 import { moveTowardsFood } from '../lib/moveTowardsFood';
 import { randomMove } from '../lib/randomMove';
@@ -35,7 +35,7 @@ app.post('/start', (request: Request, response: Response) => {
         });
         // @todo random color
         return response.json({
-            color: '#DFFF00',
+            color: '#FF0000',
         });
     } catch (e) {
         console.error(e);
@@ -45,10 +45,6 @@ app.post('/start', (request: Request, response: Response) => {
 app.post('/move', (request: Request, response: Response) => {
     log('move');
     try {
-        writeFile(request.body, (json) => {
-            json.moves[request.body.turn] = request.body;
-        });
-        // log(request.body);
         const directions = ['up', 'down', 'left', 'right'];
         let direction;
         direction = moveTowardsFoodPf(request.body);
@@ -58,6 +54,11 @@ app.post('/move', (request: Request, response: Response) => {
         if (direction === undefined) {
             direction = randomMove(request.body);
         }
+        writeFile(request.body, (json) => {
+            request.body.log = logs;
+            json.moves[request.body.turn] = request.body;
+        });
+        logs.splice(0, logs.length);
         return response.json({
             move: directions[direction],
         });

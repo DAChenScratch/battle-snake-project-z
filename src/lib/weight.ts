@@ -1,6 +1,8 @@
 import { gridDistance } from './gridDistance';
 import { BTData } from '../types/BTData';
 
+export const BLOCKED_THRESHOLD = 10;
+
 export function weight(data: BTData, x: number, y: number) {
     for (const snake of data.board.snakes) {
         const body = snake.body;

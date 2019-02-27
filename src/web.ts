@@ -1,4 +1,4 @@
-import { weight } from './lib/weight';
+import { weight, BLOCKED_THRESHOLD } from './lib/weight';
 import { closestFood } from './lib/closestFood';
 import { BTData } from './types/BTData';
 import { sortedFood } from './lib/sortedFood';
@@ -20,6 +20,13 @@ const pf = new PF.AStarFinder({
 });
 
 const drawBoard = (data) => {
+    $('.log').html('');
+    if (data.log) {
+        for (const log of data.log) {
+            $('<div>').text(log).appendTo('.log');
+        }
+    }
+
     grid.html('');
     const matrix = [];
     const costs = [];
@@ -29,7 +36,7 @@ const drawBoard = (data) => {
         const row = $('<div>').addClass('row').appendTo(grid);
         for (var x = 0; x < data.board.width; x++) {
             const w = weight(data, x, y);
-            matrix[y][x] = w > 0 ? FREE : BLOCKED;
+            matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
             costs[y][x] = 100 - w;
             const col = $('<div>').addClass('col').css({
                 backgroundColor: `rgba(0, 0, 0, ${(100 - w) / 100})`,
