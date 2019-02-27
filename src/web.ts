@@ -58,9 +58,7 @@ const drawBoard = (data) => {
     if (!sorted.length) {
         return;
     }
-    console.log('sorted', sorted);
     closest: for (const closest of sorted) {
-        console.log('closest', closest);
         const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
         const path = pf.findPath(data.you.body[0].x, data.you.body[0].y, closest.food.x, closest.food.y, pfGrid.clone());
         for (let i = 0; i < path.length; i++) {
