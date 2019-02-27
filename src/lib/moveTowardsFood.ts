@@ -1,18 +1,20 @@
-moveTowardsFood = (data) => {
-    const closest = {
-        food: null,
-        distance: 100000,
-    };
-    if (!data.board.food.length) {
+import { shuffle } from './shuffle';
+import { gridDistance } from './gridDistance';
+import { isFree } from './isFree';
+import { log } from './log';
+import { BTData, BTXY } from '../types/BTData';
+import { closestFood } from './closestFood';
+
+interface Closest {
+    food: BTXY,
+    distance: number,
+}
+
+export function moveTowardsFood(data: BTData) {
+    const closest = closestFood(data);
+    if (!closest) {
         log('moveTowardsFood', 'no food');
         return;
-    }
-    for (const food of data.board.food) {
-        const distance = gridDistance(data.you.body[0].x, data.you.body[0].y, food.x, food.y);
-        if (distance < closest.distance) {
-            closest.food = food;
-            closest.distance = distance;
-        }
     }
 
     let x, y;
@@ -45,10 +47,10 @@ moveTowardsFood = (data) => {
                 y = data.you.body[0].y;
                 break;
         }
-        if (isFree(data, x, y, data.you) && gridDistance(x, y, closest.food.x, closest.food.y) < closest.distance) {
+        if (isFree(data, x, y) && gridDistance(x, y, closest.food.x, closest.food.y) < closest.distance) {
             log('moveTowardsFood', direction, data.you.body[0].x, data.you.body[0].y, closest);
             return direction;
         }
     }
     log('moveTowardsFood', 'no options');
-};
+}

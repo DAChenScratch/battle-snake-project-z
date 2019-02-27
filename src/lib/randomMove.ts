@@ -1,4 +1,8 @@
-randomMove = (data) => {
+import { isFree } from './isFree';
+import { log } from './log';
+import { BTData } from '../types/BTData';
+
+export function randomMove(data: BTData) {
     let direction, x, y;
     let loopBreak = 100;
     do {
@@ -32,7 +36,7 @@ randomMove = (data) => {
             log('randomMove', 'loopBreak');
             break;
         }
-    } while (!isFree(data, x, y, data.you))
+    } while (!isFree(data, x, y));
     log('randomMove', direction);
     return direction;
-};
+}

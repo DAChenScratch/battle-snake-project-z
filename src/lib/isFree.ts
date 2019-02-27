@@ -1,4 +1,6 @@
-isFree = (data, x, y, self) => {
+import { BTData } from "../types/BTData";
+
+export function isFree(data: BTData, x: number, y: number) {
     if (x < 0) {
         return false;
     }
@@ -17,7 +19,7 @@ isFree = (data, x, y, self) => {
                 return false;
             }
         }
-        if (snake.id != self.id) {
+        if (snake.id != data.you.id) {
             if (x >= snake.body[0].x - 1 &&
                 x <= snake.body[0].x + 1 &&
                 y >= snake.body[0].y - 1 &&
@@ -27,4 +29,4 @@ isFree = (data, x, y, self) => {
         }
     }
     return true;
-};
+}

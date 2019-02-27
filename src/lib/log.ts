@@ -1,6 +1,6 @@
-log = (...args) => {
+export function log(...args: any[]) {
     for (const arg of args) {
-        if (typeof arg === 'string' || arg instanceof String) {
+        if (typeof arg === 'string') {
             process.stdout.write(arg);
             process.stdout.write(' ');
         } else if (!isNaN(arg)) {
@@ -12,4 +12,4 @@ log = (...args) => {
         }
     }
     process.stdout.write('\n');
-};
+}
