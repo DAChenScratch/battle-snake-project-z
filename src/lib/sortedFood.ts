@@ -8,10 +8,6 @@ interface Sorted {
 }
 
 export function sortedFood(data: BTData): Sorted[] {
-    const sorted: Sorted = {
-        food: null,
-        distance: 100000,
-    };
     if (!data.board.food.length) {
         return [];
     }

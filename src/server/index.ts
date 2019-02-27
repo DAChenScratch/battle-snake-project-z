@@ -16,6 +16,7 @@ import { writeFile } from '../lib/writeFile';
 import { moveTowardsFood } from '../lib/moveTowardsFood';
 import { randomMove } from '../lib/randomMove';
 import { moveTowardsFoodPf } from '../lib/moveTowardsFoodPf';
+import { moveTowardsEnemy } from '../lib/moveTowardsEnemy';
 
 app.set('port', (process.env.PORT || 9001));
 
@@ -51,6 +52,9 @@ app.post('/move', (request: Request, response: Response) => {
         const directions = ['up', 'down', 'left', 'right'];
         let direction;
         direction = moveTowardsFoodPf(request.body);
+        if (direction === undefined) {
+            direction = moveTowardsEnemy(request.body);
+        }
         if (direction === undefined) {
             direction = randomMove(request.body);
         }
