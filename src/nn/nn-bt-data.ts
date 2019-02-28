@@ -1,14 +1,13 @@
 import { BTData } from "../types/BTData";
 
-const gamesPath = __dirname + '/../../games/';
-const fs = require('fs');
-
 const FOOD_COUNT = 30;
 const MAX_BOARD_SIZE = 19;
 const MIN_POSITION = 1 / MAX_BOARD_SIZE;
 const MAX_SNAKES = 2;
 const MAX_SNAKE_LENGTH = 20;
 
+// const gamesPath = __dirname + '/../../games/';
+// const fs = require('fs');
 // console.log(gamesPath);
 // fs.readdir(gamesPath, (error, files) => {
 //     if (error) {

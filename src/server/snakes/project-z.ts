@@ -31,3 +31,26 @@ new Server(9001, (data: BTData) => {
         move: direction,
     };
 });
+
+export class ProjectZ {
+    start(data: BTData) {
+        return {
+            color: Color.PINK,
+            headType: HeadType.BELUGA,
+            tailType: TailType.BLOCK_BUM,
+        };
+    }
+    move(data: BTData) {
+        let direction;
+        direction = moveTowardsFoodPf(data);
+        if (!direction) {
+            direction = moveTowardsEnemy(data);
+        }
+        if (!direction) {
+            direction = randomMove(data);
+        }
+        return {
+            move: direction,
+        };
+    }
+}
