@@ -99,11 +99,7 @@ usort($files, function($a, $b) {
 
 <body>
     <div class="wrapper">
-        <div>
-            <div class="grid">
-            </div>
-            <div class="log">
-            </div>
+        <div class="grid">
         </div>
         <div class="games">
             <?php foreach ($files as $file): ?>
@@ -112,6 +108,8 @@ usort($files, function($a, $b) {
         </div>
         <div class="moves">
         </div>
+        <pre class="log">
+        </pre>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="bundle.js"></script>

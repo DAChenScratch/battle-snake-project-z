@@ -1,9 +1,8 @@
-import { gridDistance } from './gridDistance';
 import { log } from './log';
 import { weight, BLOCKED_THRESHOLD } from './weight';
-import { closestFood } from './closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from './sortedFood';
+import { MoveDirection } from '../types/MoveDirection';
 
 const PF = require('pathfinding');
 
@@ -14,10 +13,6 @@ const pf = new PF.AStarFinder({
 
 const BLOCKED = 1;
 const FREE = 0;
-const UP = 0;
-const DOWN = 1;
-const LEFT = 2;
-const RIGHT = 3;
 
 export function moveTowardsFoodPf(data: BTData) {
     const matrix = [];
@@ -47,16 +42,16 @@ export function moveTowardsFoodPf(data: BTData) {
             }
             if (p[0] == data.you.body[0].x - 1 && p[1] == data.you.body[0].y) {
                 log('moveTowardsFoodPf', p, 'left');
-                return LEFT;
+                return MoveDirection.LEFT;
             } else if (p[0] == data.you.body[0].x + 1 && p[1] == data.you.body[0].y) {
                 log('moveTowardsFoodPf', p, 'right');
-                return RIGHT;
+                return MoveDirection.RIGHT;
             } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y - 1) {
                 log('moveTowardsFoodPf', p, 'up');
-                return UP;
+                return MoveDirection.UP;
             } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y + 1) {
                 log('moveTowardsFoodPf', p, 'down');
-                return DOWN;
+                return MoveDirection.DOWN;
             } else {
                 log('moveTowardsFoodPf', p, 'no path');
             }

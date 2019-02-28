@@ -5,6 +5,7 @@ import { closestFood } from './closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from './sortedFood';
 import { sortedEnemies } from './sortedEnemies';
+import { MoveDirection } from '../types/MoveDirection';
 
 const PF = require('pathfinding');
 
@@ -69,16 +70,16 @@ export function moveTowardsEnemy(data: BTData) {
             }
             if (p[0] == data.you.body[0].x - 1 && p[1] == data.you.body[0].y) {
                 log('moveTowardsEnemy', p, 'left');
-                return LEFT;
+                return MoveDirection.LEFT;
             } else if (p[0] == data.you.body[0].x + 1 && p[1] == data.you.body[0].y) {
                 log('moveTowardsEnemy', p, 'right');
-                return RIGHT;
+                return MoveDirection.RIGHT;
             } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y - 1) {
                 log('moveTowardsEnemy', p, 'up');
-                return UP;
+                return MoveDirection.UP;
             } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y + 1) {
                 log('moveTowardsEnemy', p, 'down');
-                return DOWN;
+                return MoveDirection.DOWN;
             } else {
                 log('moveTowardsEnemy', p, 'no path');
             }

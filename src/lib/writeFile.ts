@@ -2,10 +2,12 @@ import { BTData } from "../types/BTData";
 
 const fs = require('fs');
 
-const recording = false;
+export const Writer = {
+    enabled: false,
+};
 
 export function writeFile(data: BTData, updater: (json: any) => void) {
-    if (!recording) {
+    if (!Writer.enabled) {
         return;
     }
     const path = __dirname + '/../../games/' + data.you.id + '.json';

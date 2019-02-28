@@ -1,7 +1,11 @@
-const logging = false;
+export const Logger = {
+    enabled: false,
+};
+
 export const logs = [];
+
 export function log(...args: any[]) {
-    if (!logging) {
+    if (!Logger.enabled) {
         return;
     }
     let line = '';
