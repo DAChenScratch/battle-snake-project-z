@@ -1,5 +1,11 @@
 import { ProjectZ } from "./snakes/project-z";
 import { Server } from "./Server";
+import { Logger } from "../lib/log";
+import { Writer } from "../lib/writeFile";
+import { NN } from "./snakes/nn";
 
-const snake = new ProjectZ();
-const server = new Server(9001, snake.start, snake.move);
+Logger.enabled = true;
+Writer.enabled = true;
+
+new Server(9001, new ProjectZ(), true);
+new Server(9002, new NN(), false);

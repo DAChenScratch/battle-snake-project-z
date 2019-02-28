@@ -9,7 +9,6 @@ export function randomMove(data: BTData) {
     const directions = [MoveDirection.LEFT, MoveDirection.RIGHT, MoveDirection.UP, MoveDirection.DOWN];
     shuffle(directions);
     while (direction = directions.pop()) {
-        direction = Math.floor(Math.random() * 4);
         switch (direction) {
             case MoveDirection.UP:
                 x = data.you.body[0].x;

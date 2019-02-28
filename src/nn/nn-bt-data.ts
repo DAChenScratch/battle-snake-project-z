@@ -1,10 +1,12 @@
 import { BTData } from "../types/BTData";
+import { ServerMoveResponse } from "../server/Server";
+import { MoveDirection } from "../types/MoveDirection";
 
 const FOOD_COUNT = 30;
 const MAX_BOARD_SIZE = 19;
 const MIN_POSITION = 1 / MAX_BOARD_SIZE;
 const MAX_SNAKES = 2;
-const MAX_SNAKE_LENGTH = 20;
+const MAX_SNAKE_LENGTH = 100;
 
 // const gamesPath = __dirname + '/../../games/';
 // const fs = require('fs');
@@ -78,6 +80,20 @@ export function dataToInput(data: BTData) {
     }
 
     return input;
+}
+
+export function moveToOutput(response: ServerMoveResponse) {
+    switch (response.move) {
+        case MoveDirection.UP:
+            return [1, 0, 0, 0];
+        case MoveDirection.DOWN:
+            return [0, 1, 0, 0];
+        case MoveDirection.LEFT:
+            return [0, 0, 1, 0];
+        case MoveDirection.RIGHT:
+            return [0, 0, 0, 1];
+    }
+    return [0, 0, 0, 0];
 }
 
 export function logInput(input: number[]) {

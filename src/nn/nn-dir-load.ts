@@ -228,3 +228,5 @@ for (let r = 0; r < 1000; r++) {
     }
 }
 console.log(results);
+
+export {};

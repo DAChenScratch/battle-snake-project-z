@@ -1,7 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
-const app = express();
 const {
     fallbackHandler,
     notFoundHandler,
@@ -18,23 +17,36 @@ import { MoveDirection } from '../types/MoveDirection';
 import { Color } from '../types/Color';
 import { HeadType } from '../types/HeadType';
 import { TailType } from '../types/TailType';
+import { dataToInput, moveToOutput } from '../nn/nn-bt-data';
 
-interface ServerStartResponse {
+export interface ServerStartResponse {
     color: Color,
     headType: HeadType,
     tailType: TailType,
 }
 
-interface ServerMoveResponse {
+export interface ServerMoveResponse {
     move: MoveDirection,
 }
 
+export interface Snake {
+    start: (data: BTData) => ServerStartResponse,
+    move: (data: BTData) => ServerMoveResponse,
+}
+
+const clone = (data) => {
+    return JSON.parse(JSON.stringify(data));
+};
+
 export class Server {
+    private gameLog = {};
+
     constructor(
         private port: number,
-        private start: (data: BTData) => ServerStartResponse,
-        private move: (data: BTData) => ServerMoveResponse,
+        private snake: Snake,
+        private saveGame: boolean,
     ) {
+        const app = express();
         app.set('port', this.port);
 
         app.enable('verbose errors');
@@ -46,13 +58,18 @@ export class Server {
         app.post('/start', (request: Request, response: Response) => {
             try {
                 log('start');
-                const startResponse = this.start(request.body);
+                const startResponse = this.snake.start(request.body);
                 log('startResponse', startResponse);
-                writeFile(request.body, (json) => {
-                    request.body.log = logs;
-                    json.start = request.body;
-                    json.moves = [];
-                });
+
+                if (this.saveGame) {
+                    request.body.log = clone(logs);
+                    this.gameLog[request.body.you.id] = {
+                        start: request.body,
+                        moves: [],
+                        trainingData: [],
+                    };
+                }
+
                 logs.splice(0, logs.length);
                 return response.json(startResponse);
             } catch (e) {
@@ -63,12 +80,20 @@ export class Server {
         app.post('/move', (request: Request, response: Response) => {
             try {
                 log('move');
-                const moveResponse = this.move(request.body);
+                const moveResponse = this.snake.move(request.body);
                 log('moveResponse', moveResponse);
-                writeFile(request.body, (json) => {
-                    request.body.log = logs;
-                    json.moves[request.body.turn] = request.body;
-                });
+
+                const trainingData = {
+                    input: dataToInput(request.body),
+                    output: moveToOutput(moveResponse),
+                }
+
+                if (this.saveGame) {
+                    request.body.log = clone(logs);
+                    this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
+                    this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
+                }
+
                 logs.splice(0, logs.length);
                 return response.json(moveResponse);
             } catch (e) {
@@ -79,6 +104,11 @@ export class Server {
         app.post('/end', (request: Request, response: Response) => {
             try {
                 log('end');
+                if (this.saveGame) {
+                    this.gameLog[request.body.you.id].end = request.body;
+                    writeFile(request.body, this.gameLog[request.body.you.id]);
+                    delete this.gameLog[request.body.you.id];
+                }
                 return response.json({});
             } catch (e) {
                 console.error(e);

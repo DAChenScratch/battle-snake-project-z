@@ -1,13 +1,13 @@
 <?php
 $files = glob(__DIR__ . '/../games/*.json');
-$files = array_map(function($file) {
+$files = array_map(function ($file) {
     return [
         'file' => $file,
         'mtime' => filemtime($file),
         'size' => filesize($file),
     ];
 }, $files);
-usort($files, function($a, $b) {
+usort($files, function ($a, $b) {
     return $a['mtime'] - $b['mtime'];
 });
 ?>
@@ -15,13 +15,30 @@ usort($files, function($a, $b) {
 
 <head>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+        }
+
         .wrapper {
             display: flex;
         }
 
+        .scroll {
+            overflow-y: scroll;
+            padding: 10px;
+        }
+
         .games,
         .moves {
-            padding: 10px;
             flex-direction: column-reverse;
             display: flex;
             justify-content: flex-end;
@@ -101,17 +118,22 @@ usort($files, function($a, $b) {
     <div class="wrapper">
         <div class="grid">
         </div>
-        <div class="games">
-            <?php foreach ($files as $file): ?>
-                <div class="game" data-game="<?= basename($file['file']); ?>"><?= date(DATE_ISO8601, $file['mtime']); ?></div>
-            <?php endforeach; ?>
+        <div class="scroll">
+            <div class="games">
+                <?php foreach ($files as $file): ?>
+                    <div class="game" data-game="<?=basename($file['file']);?>"><?=date(DATE_ISO8601, $file['mtime']);?></div>
+                <?php endforeach;?>
+            </div>
         </div>
-        <div class="moves">
+        <div class="scroll">
+            <div class="moves"></div>
         </div>
-        <pre class="log">
+        <pre class="scroll">
+            <div class="log"></div>
         </pre>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="bundle.js"></script>
+    <script>loadGrid()</script>
 </body>
 </html>
