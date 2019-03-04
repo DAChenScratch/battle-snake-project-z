@@ -7,8 +7,8 @@ import { KeepAway } from "./snakes/keep-away";
 import { Rando } from "./snakes/rando";
 import { Tak } from "./snakes/tak";
 
-Logger.enabled = true;
-Writer.enabled = true;
+// Logger.enabled = true;
+// Writer.enabled = true;
 
 new Server(9001, new ProjectZ(), true);
 new Server(9002, new KeepAway(), true);
