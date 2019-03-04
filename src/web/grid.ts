@@ -66,7 +66,7 @@ export function loadGrid() {
             }
         }
 
-        console.log(moveTowardsEnemy(data));
+        console.log(moveAway(data, 2));
     };
 
     // const hasWayOut = (data: BTData, path) => {

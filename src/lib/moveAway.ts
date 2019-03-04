@@ -40,14 +40,14 @@ const closestBlocked = (data: BTData, sx: number, sy: number) => {
     return closest;
 };
 
-export function moveAway(data: BTData) {
+export function moveAway(data: BTData, minDistance = null) {
     const furthestAway = {
         x: null,
         y: null,
         distance: null,
         pathDirection: null,
     };
-    const pather = new Pather(data);
+    let pather = new Pather(data);
     const grid = [];
     for (let y = 0; y < data.board.height; y++) {
         const row = [];
@@ -64,6 +64,22 @@ export function moveAway(data: BTData) {
             }
         }
         grid[y] = row;
+    }
+
+    if (minDistance !== null) {
+        pather = new Pather(data, false);
+        for (const snake of data.board.snakes) {
+            if (snake.id == data.you.id) {
+                continue;
+            }
+            const path = pather.pathTo(snake.body[0].x, snake.body[0].y);
+            if (path.length && path.length <= minDistance) {
+                log('moveAway', 'minDistance', furthestAway);
+                return furthestAway.pathDirection;
+            }
+        }
+        log('moveAway', 'minDistance', 'no need');
+        return;
     }
 
     if (furthestAway) {

@@ -49,5 +49,40 @@ export function weight(data: BTData, x: number, y: number, blockHeads = true) {
         }
     }
 
+    for (const snake of data.board.snakes) {
+        const body = snake.body;
+        for (const [p, part] of body.entries()) {
+            if (x + 1 == part.x && y == part.y) {
+                return 40;
+            }
+            if (x - 1 == part.x && y == part.y) {
+                return 40;
+            }
+            if (x == part.x && y + 1 == part.y) {
+                return 40;
+            }
+            if (x == part.x && y - 1 == part.y) {
+                return 40;
+            }
+        }
+    }
+
+
+    if (x == 0) {
+        return 40;
+    }
+
+    if (y == 0) {
+        return 40;
+    }
+
+    if (x == data.board.width - 1) {
+        return 40;
+    }
+
+    if (y == data.board.height - 1) {
+        return 40;
+    }
+
     return 50;
 }

@@ -34,7 +34,7 @@ export function smartRandomMove(data: BTData) {
 
         if (isFree(data, x, y)) {
             const w = weight(data, x, y);
-            if (w < 50) {
+            if (w < 40) {
                 continue;
             }
             log('smartRandomMove', direction);
