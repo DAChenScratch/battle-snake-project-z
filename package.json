@@ -37,8 +37,8 @@
     "node": ">=8.x"
   },
   "scripts": {
-    "nodemon": "nodemon --watch dist dist/server/index.js",
-    "server": "forever start dist/index.js"
+    "nodemon": "nodemon --delay 500ms --watch dist dist/server/index.js",
+    "server": "forever start dist/server/index.js"
   },
   "nodemonConfig": {
     "ignore": [

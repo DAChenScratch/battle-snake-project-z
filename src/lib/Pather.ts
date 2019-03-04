@@ -17,6 +17,7 @@ export class Pather {
 
     constructor(
         private data: BTData,
+        private blockHeads = true,
     ) {
         const matrix = [];
         const costs = [];
@@ -24,7 +25,7 @@ export class Pather {
             matrix[y] = [];
             costs[y] = [];
             for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y);
+                const w = weight(data, x, y, blockHeads);
                 matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
                 costs[y][x] = 100 - w;
             }
@@ -36,8 +37,7 @@ export class Pather {
         return pf.findPath(this.data.you.body[0].x, this.data.you.body[0].y, x, y, this.pfGrid.clone());
     }
 
-    pathDirection(x: number, y: number) {
-        const path = this.pathTo(x, y);
+    pathToDirection(path) {
         for (let i = 0; i < path.length; i++) {
             const p = path[i];
             if (i === 0) {
@@ -54,6 +54,10 @@ export class Pather {
             }
             break;
         }
-        return null;
+    }
+
+    pathDirection(x: number, y: number) {
+        const path = this.pathTo(x, y);
+        return this.pathToDirection(path);
     }
 }

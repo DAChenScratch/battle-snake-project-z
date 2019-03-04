@@ -4,6 +4,7 @@ import { BTData } from '../types/BTData';
 import { sortedFood } from '../lib/sortedFood';
 import { moveAway } from '../lib/moveAway';
 import { smartRandomMove } from '../lib/smartRandomMove';
+import { moveTowardsEnemy } from '../lib/moveTowardsEnemy';
 
 export function loadGrid() {
     const PF = require('pathfinding');
@@ -39,7 +40,7 @@ export function loadGrid() {
             costs[y] = [];
             const row = $('<div>').addClass('row').appendTo(grid);
             for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y);
+                const w = weight(data, x, y, false);
                 matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
                 costs[y][x] = 100 - w;
                 const col = $('<div>').addClass('col').css({
@@ -65,7 +66,7 @@ export function loadGrid() {
             }
         }
 
-        console.log(smartRandomMove(data));
+        console.log(moveTowardsEnemy(data));
     };
 
     // const hasWayOut = (data: BTData, path) => {

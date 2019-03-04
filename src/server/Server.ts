@@ -58,7 +58,7 @@ export class Server {
 
         app.post('/start', (request: Request, response: Response) => {
             try {
-                log('start');
+                log('start', this.snake.constructor.name);
                 const startResponse = this.snake.start(request.body);
                 log('startResponse', startResponse);
 
@@ -80,7 +80,7 @@ export class Server {
 
         app.post('/move', (request: Request, response: Response) => {
             try {
-                log('move');
+                log('move', this.snake.constructor.name);
                 const moveResponse = this.snake.move(request.body);
                 log('moveResponse', moveResponse);
 
@@ -104,7 +104,7 @@ export class Server {
 
         app.post('/end', (request: Request, response: Response) => {
             try {
-                log('end');
+                log('end', this.snake.constructor.name);
                 if (this.saveGame) {
                     this.gameLog[request.body.you.id].end = request.body;
                     writeFile(request.body.you.id, this.gameLog[request.body.you.id]);
@@ -118,7 +118,7 @@ export class Server {
 
         app.post('/ping', (request: Request, response: Response) => {
             try {
-                log('ping');
+                log('ping', this.snake.constructor.name);
                 return response.json({});
             } catch (e) {
                 console.error(e);

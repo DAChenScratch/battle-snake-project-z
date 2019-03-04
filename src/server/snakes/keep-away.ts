@@ -6,6 +6,7 @@ import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { moveAway } from '../../lib/moveAway';
+import { smartRandomMove } from '../../lib/smartRandomMove';
 
 export class KeepAway {
     start(data: BTData) {
@@ -22,6 +23,9 @@ export class KeepAway {
         }
         if (!direction) {
             direction = moveAway(data);
+        }
+        if (!direction) {
+            direction = smartRandomMove(data);
         }
         if (!direction) {
             direction = randomMove(data);

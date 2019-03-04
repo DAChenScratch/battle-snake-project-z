@@ -7,19 +7,24 @@ import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 
-export class ProjectZ {
+export class Tak {
     start(data: BTData) {
         return {
-            color: Color.PINK,
-            headType: HeadType.BELUGA,
-            tailType: TailType.BLOCK_BUM,
+            color: Color.RED,
+            headType: HeadType.FANG,
+            tailType: TailType.FRECKLED,
         };
     }
     move(data: BTData) {
         let direction;
-        direction = moveTowardsFoodPf(data);
+        if (data.you.health < 30) {
+            direction = moveTowardsFoodPf(data);
+        }
         if (!direction) {
             direction = moveTowardsEnemy(data);
+        }
+        if (!direction) {
+            direction = moveTowardsFoodPf(data);
         }
         if (!direction) {
             direction = smartRandomMove(data);
