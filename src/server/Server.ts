@@ -2,7 +2,6 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
 const {
-    fallbackHandler,
     notFoundHandler,
     genericErrorHandler,
     poweredByHandler
@@ -19,6 +18,7 @@ import { HeadType } from '../types/HeadType';
 import { TailType } from '../types/TailType';
 import { dataToInput } from '../nn/nn-bt-data-grid';
 import { moveToOutput } from '../nn/nn-bt-data';
+import { HttpError } from './handlers';
 
 export interface ServerStartResponse {
     color: Color,
@@ -125,7 +125,31 @@ export class Server {
             }
         });
 
-        app.use('*', fallbackHandler);
+        app.use('*', (req: Request, res: Response, next: (next?: any) => void) => {
+            console.dir(req.baseUrl);
+            // Root URL path
+            if (req.baseUrl === '') {
+                res.status(200);
+                return res.send(`
+                    ${this.snake.constructor.name}<br/>
+                    Battlesnake documentation can be found at
+                    <a href="https://docs.battlesnake.io">https://docs.battlesnake.io</a>.
+                `);
+            }
+
+            // Short-circuit favicon requests
+            if (req.baseUrl === '/favicon.ico') {
+                res.set({ 'Content-Type': 'image/x-icon' });
+                res.status(200);
+                res.end();
+                return next();
+            }
+
+            // Reroute all 404 routes to the 404 handler
+            const err = new Error() as HttpError;
+            err.status = 404;
+            return next(err);
+        });
         app.use(notFoundHandler);
         app.use(genericErrorHandler);
 
