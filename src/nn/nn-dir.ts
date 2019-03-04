@@ -1,3 +1,5 @@
+import { generateConfig } from "./nn-trainer";
+
 (() => {
     const brain = require('brain.js');
 
@@ -21,22 +23,6 @@
         return {
             input: [expected, randomFloat(), randomFloat(), randomFloat()],
             output: [expected],
-        };
-    };
-
-    const generateConfig = () => {
-        const activations = ['sigmoid', 'relu', 'leaky-relu', 'tanh'];
-        const hiddenLayers = [];
-        const hiddenLayersAmount = Math.ceil(Math.random() * 10);
-        for (let i = 0; i < hiddenLayersAmount; i++) {
-            const layerSize = Math.ceil(Math.random() * 10) + 1;
-            hiddenLayers.push(layerSize);
-        }
-        return {
-            binaryThresh: Math.random(),
-            hiddenLayers: hiddenLayers,
-            activation: activations[Math.floor(Math.random() * activations.length)],
-            leakyReluAlpha: Math.random(),
         };
     };
 

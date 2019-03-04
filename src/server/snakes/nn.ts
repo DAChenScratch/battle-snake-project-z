@@ -6,13 +6,13 @@ import { MoveDirection } from '../../types/MoveDirection';
 import { dataToInput } from '../../nn/nn-bt-data';
 
 const brain = require('brain.js');
-const network = require('../../../networks/c7d542bbeeee546f7334d8ab3310db72.json');
+const network = require('../../../networks/aafcf79319e2bf424f27cb1405911bc9.json');
 
 export class NN {
     private net;
 
     constructor() {
-        this.net = new brain.NeuralNetworkGPU();
+        this.net = new brain.NeuralNetwork();
         this.net.fromJSON(network);
     }
 

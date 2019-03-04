@@ -1,4 +1,5 @@
-import { trainer } from "./nn-trainer";
+import { trainer, generateConfig } from "./nn-trainer";
+import { logInput } from "./nn-bt-data-grid";
 
 const brain = require('brain.js');
 const crypto = require('crypto');
@@ -33,17 +34,32 @@ const readFile = (file): Promise<any> => {
         if (!file.match(/\.json$/)) {
             continue;
         }
-        console.log(file);
         const data = await readFile(gamesPath + file);
-        if (data.end.you.id == data.moves[data.moves.length - 1].board.snakes[0].id) {
+        if (data.end.you.id == data.moves[data.moves.length - 1].board.snakes[0].id && data.moves.length > 50) {
+            console.log(file);
             hash.update(file);
             trainingData = trainingData.concat(data.trainingData);
+            // break;
         }
     }
+    // trainingData = trainingData.splice(0, 4);
+    for (const t of trainingData) {
+        // logInput(t.input);
+        // console.log(t.output);
+        // process.stdout.write('\n');
+        t.input = t.input.map(v => parseFloat((v / 7).toFixed(2)));
+    }
+
+    // console.log(JSON.stringify(trainingData));
 
     console.log('Training data size:', trainingData.length)
-    const net = await trainer(trainingData);
-    fs.writeFileSync(nnPath + hash.digest('hex') + '.json', JSON.stringify(net.toJSON(), null, 4));
-});
+    const config = generateConfig(100, 2);
+    console.log(config);
+    const net = await trainer(trainingData, config, 1000);
+    console.log('Training done');
+    const networkFile = nnPath + hash.digest('hex') + '.json';
+    fs.writeFileSync(networkFile, JSON.stringify(net.toJSON(), null, 4));
+    console.log(networkFile);
+})();
 
 export {};
