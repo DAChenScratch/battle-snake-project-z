@@ -2,6 +2,7 @@ import { weight, BLOCKED_THRESHOLD } from '../lib/weight';
 import { closestFood } from '../lib/closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from '../lib/sortedFood';
+import { moveAway } from '../lib/moveAway';
 
 export function loadGrid() {
     const PF = require('pathfinding');
@@ -21,7 +22,7 @@ export function loadGrid() {
         useCost: true,
     });
 
-    const drawBoard = (data) => {
+    const drawBoard = (data: BTData) => {
         $('.log').html('');
         if (data.log) {
             for (const log of data.log) {
@@ -63,74 +64,31 @@ export function loadGrid() {
             }
         }
 
-        const sorted = sortedFood(data);
-        if (!sorted.length) {
-            return;
-        }
-        closest: for (const closest of sorted) {
-            const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
-            const path = pf.findPath(data.you.body[0].x, data.you.body[0].y, closest.food.x, closest.food.y, pfGrid.clone());
-            for (let i = 0; i < path.length; i++) {
-                const p = path[i];
-                if (i == 0) {
-                    continue;
-                }
-                const col = getCol(p[0], p[1]);
-                $('<div>').addClass('path').appendTo(col);
-            }
-
-            for (let i = 0; i < path.length; i++) {
-                const p = path[i];
-                if (i === 0) {
-                    continue;
-                }
-                if (p[0] == data.you.body[0].x - 1 && p[1] == data.you.body[0].y) {
-                    // Left
-                    console.log('moveTowardsFoodPf', p, 'left');
-                    break closest;
-                } else if (p[0] == data.you.body[0].x + 1 && p[1] == data.you.body[0].y) {
-                    // Right
-                    console.log('moveTowardsFoodPf', p, 'right');
-                    break closest;
-                } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y - 1) {
-                    // Up
-                    console.log('moveTowardsFoodPf', p, 'up');
-                    break closest;
-                } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y + 1) {
-                    // Down
-                    console.log('moveTowardsFoodPf', p, 'down');
-                    break closest;
-                } else {
-                    console.log('moveTowardsFoodPf', p, 'no path');
-                }
-            }
-        }
-
-        // hasWayOut(data, path);
+        console.log(moveAway(data));
     };
 
-    const hasWayOut = (data: BTData, path) => {
-        const matrix = [];
-        const costs = [];
-        for (var y = 0; y < data.board.height; y++) {
-            matrix[y] = [];
-            costs[y] = [];
-            for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y);
-                matrix[y][x] = w > 0 ? FREE : BLOCKED;
-                costs[y][x] = 100 - w;
-            }
-        }
-        for (const [i, p] of path.entries()) {
-            matrix[p[1]][p[0]] = BLOCKED;
-        }
+    // const hasWayOut = (data: BTData, path) => {
+    //     const matrix = [];
+    //     const costs = [];
+    //     for (var y = 0; y < data.board.height; y++) {
+    //         matrix[y] = [];
+    //         costs[y] = [];
+    //         for (var x = 0; x < data.board.width; x++) {
+    //             const w = weight(data, x, y);
+    //             matrix[y][x] = w > 0 ? FREE : BLOCKED;
+    //             costs[y][x] = 100 - w;
+    //         }
+    //     }
+    //     for (const [i, p] of path.entries()) {
+    //         matrix[p[1]][p[0]] = BLOCKED;
+    //     }
 
-        const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
-        for (const food of data.board.food) {
-            const wayOutPath = pf.findPath(data.you.body[0].x, data.you.body[0].y, food.x, food.y, pfGrid.clone());
-            console.log(wayOutPath);
-        }
-    }
+    //     const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
+    //     for (const food of data.board.food) {
+    //         const wayOutPath = pf.findPath(data.you.body[0].x, data.you.body[0].y, food.x, food.y, pfGrid.clone());
+    //         console.log(wayOutPath);
+    //     }
+    // }
 
     let game = null;
     const loadGame = (gameFile, turn = null) => {

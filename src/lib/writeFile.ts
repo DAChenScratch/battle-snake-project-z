@@ -6,10 +6,11 @@ export const Writer = {
     enabled: false,
 };
 
-export function writeFile(data: BTData, json: any) {
+export function writeFile(id: string, json: any) {
     if (!Writer.enabled) {
         return;
     }
-    const path = __dirname + '/../../games/' + data.you.id + '.json';
+    const path = __dirname + '/../../games/' + id + '.json';
+    console.log('Writing file', path);
     fs.writeFileSync(path, JSON.stringify(json, null, 4));
 }

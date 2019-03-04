@@ -6640,6 +6640,6 @@ export function train() {
         }
     ];
     console.log(trainingData);
-    const net = trainer(trainingData);
+    const net = trainer(trainingData, {});
     console.log(net);
 }

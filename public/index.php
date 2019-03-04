@@ -133,7 +133,7 @@ usort($files, function ($a, $b) {
         </pre>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="bundle.js"></script>
+    <script src="bundle.js?cache=<?= time(); ?>"></script>
     <script>loadGrid()</script>
 </body>
 </html>

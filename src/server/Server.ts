@@ -17,7 +17,8 @@ import { MoveDirection } from '../types/MoveDirection';
 import { Color } from '../types/Color';
 import { HeadType } from '../types/HeadType';
 import { TailType } from '../types/TailType';
-import { dataToInput, moveToOutput } from '../nn/nn-bt-data';
+import { dataToInput } from '../nn/nn-bt-data-grid';
+import { moveToOutput } from '../nn/nn-bt-data';
 
 export interface ServerStartResponse {
     color: Color,
@@ -83,15 +84,15 @@ export class Server {
                 const moveResponse = this.snake.move(request.body);
                 log('moveResponse', moveResponse);
 
-                const trainingData = {
-                    input: dataToInput(request.body),
-                    output: moveToOutput(moveResponse),
-                }
+                // const trainingData = {
+                //     input: dataToInput(request.body),
+                //     output: moveToOutput(moveResponse),
+                // }
 
                 if (this.saveGame) {
                     request.body.log = clone(logs);
                     this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
-                    this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
+                    // this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
                 }
 
                 logs.splice(0, logs.length);
@@ -106,7 +107,7 @@ export class Server {
                 log('end');
                 if (this.saveGame) {
                     this.gameLog[request.body.you.id].end = request.body;
-                    writeFile(request.body, this.gameLog[request.body.you.id]);
+                    writeFile(request.body.you.id, this.gameLog[request.body.you.id]);
                     delete this.gameLog[request.body.you.id];
                 }
                 return response.json({});

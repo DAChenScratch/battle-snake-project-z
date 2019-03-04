@@ -10,6 +10,7 @@ export interface BTData {
         snakes: BTSnake[],
     },
     you: BTSnake,
+    log: any[],
 }
 
 export interface BTXY {

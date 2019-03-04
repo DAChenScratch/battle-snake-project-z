@@ -1,5 +1,6 @@
 export const Logger = {
     enabled: false,
+    console: false,
 };
 
 export const logs = [];
@@ -24,5 +25,9 @@ export function log(...args: any[]) {
         line += ' ';
     }
     logs.push(line);
-    process.stdout.write(line + '\n');
+    if (Logger.console) {
+        console.log(line);
+    } else {
+        process.stdout.write(line + '\n');
+    }
 }
