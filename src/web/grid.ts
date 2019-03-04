@@ -3,6 +3,7 @@ import { closestFood } from '../lib/closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from '../lib/sortedFood';
 import { moveAway } from '../lib/moveAway';
+import { smartRandomMove } from '../lib/smartRandomMove';
 
 export function loadGrid() {
     const PF = require('pathfinding');
@@ -64,7 +65,7 @@ export function loadGrid() {
             }
         }
 
-        console.log(moveAway(data));
+        console.log(smartRandomMove(data));
     };
 
     // const hasWayOut = (data: BTData, path) => {

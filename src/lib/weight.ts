@@ -1,7 +1,15 @@
 import { gridDistance } from './gridDistance';
 import { BTData } from '../types/BTData';
+import { isFree } from './isFree';
 
 export const BLOCKED_THRESHOLD = 10;
+
+const isDeadEnd = (data: BTData, x: number, y: number) => {
+    if (!isFree(data, x - 1, y) && !isFree(data, x + 1, y) && !isFree(data, x, y - 1) && !isFree(data, x, y + 1)) {
+        return true;
+    }
+    return false;
+};
 
 export function weight(data: BTData, x: number, y: number) {
     for (const snake of data.board.snakes) {
@@ -17,6 +25,11 @@ export function weight(data: BTData, x: number, y: number) {
             }
         }
     }
+
+    if (isDeadEnd(data, x, y)) {
+        return 0;
+    }
+
     for (const snake of data.board.snakes) {
         const body = snake.body;
         for (const [p, part] of body.entries()) {

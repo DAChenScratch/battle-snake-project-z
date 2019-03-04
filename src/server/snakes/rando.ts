@@ -5,6 +5,7 @@ import { TailType } from '../../types/TailType';
 import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
+import { smartRandomMove } from '../../lib/smartRandomMove';
 
 export class Rando {
     start(data: BTData) {
@@ -16,6 +17,12 @@ export class Rando {
     }
     move(data: BTData) {
         let direction;
+        if (data.you.health < 30) {
+            direction = moveTowardsFoodPf(data);
+        }
+        if (!direction) {
+            direction = smartRandomMove(data);
+        }
         if (!direction) {
             direction = randomMove(data);
         }
