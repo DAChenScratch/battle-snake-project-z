@@ -10,6 +10,5 @@ Logger.enabled = true;
 Writer.enabled = true;
 
 new Server(9001, new ProjectZ(), true);
-new Server(9002, new NN(), false);
-new Server(9003, new KeepAway(), true);
-new Server(9004, new Rando(), true);
+new Server(9002, new KeepAway(), true);
+new Server(9003, new Rando(), true);
