@@ -1,60 +1,22 @@
 import { log } from './log';
-import { weight, BLOCKED_THRESHOLD } from './weight';
 import { BTData } from '../types/BTData';
 import { sortedFood } from './sortedFood';
-import { MoveDirection } from '../types/MoveDirection';
-
-const PF = require('pathfinding');
-
-const pf = new PF.AStarFinder({
-    allowDiagonal: false,
-    useCost: true,
-});
-
-const BLOCKED = 1;
-const FREE = 0;
+import { Pather } from './Pather';
+import { weight } from './weight';
 
 export function moveTowardsFoodPf(data: BTData) {
-    const matrix = [];
-    const costs = [];
-    for (var y = 0; y < data.board.height; y++) {
-        matrix[y] = [];
-        costs[y] = [];
-        for (var x = 0; x < data.board.width; x++) {
-            const w = weight(data, x, y);
-            matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
-            costs[y][x] = 100 - w;
-        }
-    }
+    let pather = new Pather(data);
 
     const sorted = sortedFood(data);
     if (!sorted.length) {
+        log('moveTowardsFoodPf', 'no food');
         return;
     }
-    closest: for (const closest of sorted) {
-        const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
-        const path = pf.findPath(data.you.body[0].x, data.you.body[0].y, closest.food.x, closest.food.y, pfGrid.clone());
-
-        for (let i = 0; i < path.length; i++) {
-            const p = path[i];
-            if (i === 0) {
-                continue;
-            }
-            if (p[0] == data.you.body[0].x - 1 && p[1] == data.you.body[0].y) {
-                log('moveTowardsFoodPf', p, 'left');
-                return MoveDirection.LEFT;
-            } else if (p[0] == data.you.body[0].x + 1 && p[1] == data.you.body[0].y) {
-                log('moveTowardsFoodPf', p, 'right');
-                return MoveDirection.RIGHT;
-            } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y - 1) {
-                log('moveTowardsFoodPf', p, 'up');
-                return MoveDirection.UP;
-            } else if (p[0] == data.you.body[0].x && p[1] == data.you.body[0].y + 1) {
-                log('moveTowardsFoodPf', p, 'down');
-                return MoveDirection.DOWN;
-            } else {
-                log('moveTowardsFoodPf', p, 'no path');
-            }
+    for (const closest of sorted) {
+        const direction = pather.pathDirection(closest.food.x, closest.food.y);
+        if (direction && weight(data, closest.food.x, closest.food.y) > data.you.body.length) {
+            log('moveTowardsFoodPf', direction);
+            return direction;
         }
     }
     log('moveTowardsFoodPf', 'no options');

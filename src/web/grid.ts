@@ -1,10 +1,11 @@
-import { weight, BLOCKED_THRESHOLD } from '../lib/weight';
+import { weight, BLOCKED_THRESHOLD, floodFill } from '../lib/weight';
 import { closestFood } from '../lib/closestFood';
 import { BTData } from '../types/BTData';
 import { sortedFood } from '../lib/sortedFood';
 import { moveAway } from '../lib/moveAway';
 import { smartRandomMove } from '../lib/smartRandomMove';
 import { moveTowardsEnemy } from '../lib/moveTowardsEnemy';
+import { moveTowardsFoodPf } from '../lib/moveTowardsFoodPf';
 
 export function loadGrid() {
     const PF = require('pathfinding');
@@ -66,7 +67,7 @@ export function loadGrid() {
             }
         }
 
-        console.log(moveAway(data, 2));
+        console.log(moveTowardsFoodPf(data));
     };
 
     // const hasWayOut = (data: BTData, path) => {

@@ -4,6 +4,62 @@ import { isFree } from './isFree';
 
 export const BLOCKED_THRESHOLD = 10;
 
+export function floodFill(data: BTData, x: number, y: number) {
+    if (!data.floodFillCache) {
+        data.floodFillCache = {};
+    }
+    const key = x + ':' + y;
+    if (!data.floodFillCache[key]) {
+        data.floodFillCache[key] = floodFillCache(data, x, y);
+    }
+    return data.floodFillCache[key];
+}
+
+export function floodFillCache(data: BTData, x: number, y: number) {
+    let count = 0;
+    const nodes = [];
+    nodes.push({
+        x,
+        y,
+    });
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        if (isFree(data, node.x, node.y)) {
+            count++;
+            if (!nodes.find(n => n.x == node.x + 1 && n.y == node.y)) {
+                nodes.push({
+                    x: node.x + 1,
+                    y: node.y,
+                });
+            }
+            if (!nodes.find(n => n.x == node.x - 1 && n.y == node.y)) {
+                nodes.push({
+                    x: node.x - 1,
+                    y: node.y,
+                });
+            }
+            if (!nodes.find(n => n.x == node.x && n.y == node.y + 1)) {
+                nodes.push({
+                    x: node.x,
+                    y: node.y + 1,
+                });
+            }
+            if (!nodes.find(n => n.x == node.x && n.y == node.y - 1)) {
+                nodes.push({
+                    x: node.x,
+                    y: node.y - 1,
+                });
+            }
+        }
+    }
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const key = node.x + ':' + node.y;
+        data.floodFillCache[key] = count;
+    }
+    return count;
+};
+
 const isDeadEnd = (data: BTData, x: number, y: number) => {
     if (!isFree(data, x - 1, y) && !isFree(data, x + 1, y) && !isFree(data, x, y - 1) && !isFree(data, x, y + 1)) {
         return true;
@@ -12,6 +68,17 @@ const isDeadEnd = (data: BTData, x: number, y: number) => {
 };
 
 export function weight(data: BTData, x: number, y: number, blockHeads = true) {
+    if (!data.weightCache) {
+        data.weightCache = {};
+    }
+    const key = x + ':' + y + ':' + (blockHeads ? 1 : 0);
+    if (!data.weightCache[key]) {
+        data.weightCache[key] = weightCache(data, x, y, blockHeads);
+    }
+    return data.weightCache[key];
+}
+
+export function weightCache(data: BTData, x: number, y: number, blockHeads = true) {
     for (const snake of data.board.snakes) {
         const body = snake.body;
         // const body = snake.body.filter((p1, i, a) => a.findIndex(p2 => p1.x == p2.x && p1.y == p2.y) === i);
@@ -32,6 +99,11 @@ export function weight(data: BTData, x: number, y: number, blockHeads = true) {
 
     if (isDeadEnd(data, x, y)) {
         return 0;
+    }
+
+    const fillCount = floodFill(data, x, y);
+    if (fillCount < data.you.body.length) {
+        return fillCount;
     }
 
     if (blockHeads) {

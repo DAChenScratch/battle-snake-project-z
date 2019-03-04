@@ -11,6 +11,8 @@ export interface BTData {
     },
     you: BTSnake,
     log: any[],
+    weightCache: object,
+    floodFillCache: object,
 }
 
 export interface BTXY {
