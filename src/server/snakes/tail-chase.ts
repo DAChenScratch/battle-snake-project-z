@@ -19,7 +19,7 @@ export class TailChase {
     }
     move(data: BTData) {
         let direction;
-        if (data.you.health < 30) {
+        if (data.you.health < 20) {
             direction = moveTowardsFoodPf(data);
         }
         if (!direction) {

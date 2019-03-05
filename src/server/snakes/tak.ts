@@ -17,7 +17,16 @@ export class Tak {
     }
     move(data: BTData) {
         let direction;
-        if (data.you.health < 30) {
+        let biggestSnake = 0;
+        for (const snake of data.board.snakes) {
+            if (snake.id == data.you.id) {
+                continue;
+            }
+            if (snake.body.length > biggestSnake) {
+                biggestSnake = snake.body.length;
+            }
+        }
+        if (data.you.health < 20 || data.you.body.length < biggestSnake) {
             direction = moveTowardsFoodPf(data);
         }
         if (!direction) {

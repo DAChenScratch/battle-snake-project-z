@@ -1,18 +1,17 @@
 import { gridDistance } from './gridDistance';
 import { BTData } from '../types/BTData';
 import { isFree } from './isFree';
+import { cache } from './cache';
 
 export const BLOCKED_THRESHOLD = 10;
 
 export function floodFill(data: BTData, x: number, y: number) {
-    if (!data.floodFillCache) {
-        data.floodFillCache = {};
-    }
+    const c = cache(data, 'floodFill', {});
     const key = x + ':' + y;
-    if (!data.floodFillCache[key]) {
-        data.floodFillCache[key] = floodFillCache(data, x, y);
+    if (!c[key]) {
+        c[key] = floodFillCache(data, x, y);
     }
-    return data.floodFillCache[key];
+    return c[key];
 }
 
 export function floodFillCache(data: BTData, x: number, y: number) {
@@ -55,7 +54,7 @@ export function floodFillCache(data: BTData, x: number, y: number) {
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         const key = node.x + ':' + node.y;
-        data.floodFillCache[key] = count;
+        data.cache.floodFill[key] = count;
     }
     return count;
 };
@@ -68,17 +67,16 @@ const isDeadEnd = (data: BTData, x: number, y: number) => {
 };
 
 export function weight(data: BTData, x: number, y: number, blockHeads = true) {
-    if (!data.weightCache) {
-        data.weightCache = {};
-    }
+    const c = cache(data, 'weight', {});
     const key = x + ':' + y + ':' + (blockHeads ? 1 : 0);
-    if (!data.weightCache[key]) {
-        data.weightCache[key] = weightCache(data, x, y, blockHeads);
+    if (c[key] === undefined) {
+        c[key] = weightCache(data, x, y, blockHeads);
     }
-    return data.weightCache[key];
+    return c[key];
 }
 
 export function weightCache(data: BTData, x: number, y: number, blockHeads = true) {
+    let result = 100;
     for (const snake of data.board.snakes) {
         const body = snake.body;
         // const body = snake.body.filter((p1, i, a) => a.findIndex(p2 => p1.x == p2.x && p1.y == p2.y) === i);
@@ -103,7 +101,7 @@ export function weightCache(data: BTData, x: number, y: number, blockHeads = tru
 
     const fillCount = floodFill(data, x, y);
     if (fillCount < data.you.body.length) {
-        return fillCount;
+        result = Math.min(result, fillCount);
     }
 
     if (blockHeads) {
@@ -111,10 +109,10 @@ export function weightCache(data: BTData, x: number, y: number, blockHeads = tru
             const body = snake.body;
             for (const [p, part] of body.entries()) {
                 // Is near head?
-                if (snake.id != data.you.id && p == 0) {
+                if (snake.id != data.you.id && p == 0 && snake.body.length >= data.you.body.length) {
                     const distance = gridDistance(x, y, part.x, part.y);
-                    if (distance < 4) {
-                        return distance * 10;
+                    if (distance < 3) {
+                        result = Math.min(result, distance * 10);
                     }
                 }
             }
@@ -125,36 +123,37 @@ export function weightCache(data: BTData, x: number, y: number, blockHeads = tru
         const body = snake.body;
         for (const [p, part] of body.entries()) {
             if (x + 1 == part.x && y == part.y) {
-                return 40;
+                result = Math.min(result, 40);
             }
             if (x - 1 == part.x && y == part.y) {
-                return 40;
+                result = Math.min(result, 40);
             }
             if (x == part.x && y + 1 == part.y) {
-                return 40;
+                result = Math.min(result, 40);
             }
             if (x == part.x && y - 1 == part.y) {
-                return 40;
+                result = Math.min(result, 40);
             }
         }
     }
 
 
     if (x == 0) {
-        return 40;
+        result = Math.min(result, 40);
     }
 
     if (y == 0) {
-        return 40;
+        result = Math.min(result, 40);
     }
 
     if (x == data.board.width - 1) {
-        return 40;
+        result = Math.min(result, 40);
     }
 
     if (y == data.board.height - 1) {
-        return 40;
+        result = Math.min(result, 40);
     }
 
-    return 50;
+    result = Math.min(result, 50);
+    return result;
 }

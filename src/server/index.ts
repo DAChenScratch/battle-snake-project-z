@@ -16,3 +16,5 @@ new Server(9002, new KeepAway(), true);
 new Server(9003, new Rando(), true);
 new Server(9004, new Tak(), true);
 new Server(9005, new TailChase(), true);
+new Server(9006, new Aldo(), true);
+new Server(9007, new Dunno(), true);

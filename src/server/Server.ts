@@ -81,7 +81,9 @@ export class Server {
         app.post('/move', (request: Request, response: Response) => {
             try {
                 log('move', this.snake.constructor.name);
-                const moveResponse = this.snake.move(request.body);
+                const data: BTData = request.body;
+                data.cache = {};
+                const moveResponse = this.snake.move(data);
                 log('moveResponse', moveResponse);
 
                 // const trainingData = {
@@ -90,6 +92,7 @@ export class Server {
                 // }
 
                 if (this.saveGame) {
+                    delete data.cache;
                     request.body.log = clone(logs);
                     this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
                     // this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;

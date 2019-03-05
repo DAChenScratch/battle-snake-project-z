@@ -1,0 +1,29 @@
+import { BTData } from '../../types/BTData';
+import { ProjectZ } from './project-z';
+import { KeepAway } from './keep-away';
+import { Rando } from './rando';
+import { Tak } from './tak';
+import { TailChase } from './tail-chase';
+
+const CRC32 = require('crc-32');
+
+export class Aldo {
+    private options: any[];
+
+    constructor() {
+        this.options = [ProjectZ, KeepAway, Rando, Tak, TailChase];
+    }
+
+    start(data: BTData) {
+        return this.snake(data).start(data);
+    }
+
+    move(data: BTData) {
+        return this.snake(data).move(data);
+    }
+
+    private snake(data: BTData) {
+        const crc = Math.abs(CRC32.str(data.you.id));
+        return new this.options[crc % this.options.length]();
+    }
+}

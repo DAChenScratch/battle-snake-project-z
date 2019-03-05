@@ -41,7 +41,7 @@ export function loadGrid() {
             costs[y] = [];
             const row = $('<div>').addClass('row').appendTo(grid);
             for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y, false);
+                const w = weight(data, x, y, true);
                 matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
                 costs[y][x] = 100 - w;
                 const col = $('<div>').addClass('col').css({

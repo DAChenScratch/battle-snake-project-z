@@ -14,8 +14,9 @@ export function moveTowardsFoodPf(data: BTData) {
     }
     for (const closest of sorted) {
         const direction = pather.pathDirection(closest.food.x, closest.food.y);
-        if (direction && weight(data, closest.food.x, closest.food.y) > data.you.body.length) {
-            log('moveTowardsFoodPf', direction);
+        const w = weight(data, closest.food.x, closest.food.y);
+        if (direction && w > 20) {
+            log('moveTowardsFoodPf', direction, closest);
             return direction;
         }
     }
