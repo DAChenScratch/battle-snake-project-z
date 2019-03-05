@@ -7,6 +7,8 @@ import { KeepAway } from "./snakes/keep-away";
 import { Rando } from "./snakes/rando";
 import { Tak } from "./snakes/tak";
 import { TailChase } from "./snakes/tail-chase";
+import { Aldo } from "./snakes/aldo";
+import { Dunno } from "./snakes/dunno";
 
 // Logger.enabled = true;
 // Writer.enabled = true;
