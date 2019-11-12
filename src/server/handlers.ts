@@ -4,11 +4,6 @@ export interface HttpError extends Error {
     status: number,
 }
 
-const poweredByHandler = (req: Request, res: Response, next: (next?: any) => void) => {
-    res.setHeader('X-Powered-By', 'Battlesnake');
-    next();
-};
-
 const notFoundHandler = (err: HttpError, req: Request, res: Response, next: (next?: any) => void) => {
     if (err.status !== 404) {
         return next(err);
@@ -34,5 +29,4 @@ const genericErrorHandler = (err: HttpError, req: Request, res: Response, next: 
 module.exports = {
     notFoundHandler,
     genericErrorHandler,
-    poweredByHandler,
 };

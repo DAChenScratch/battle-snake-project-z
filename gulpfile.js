@@ -26,11 +26,11 @@ gulp.task('web', () => {
         // .pipe(uglify())
         .on('error', log.error)
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./public/'));
+        .pipe(gulp.dest('./debug/'));
 });
 
 gulp.task('default', gulp.series('ts', 'web'));
 
-gulp.task('watch', () => {
+gulp.task('watch', gulp.series('ts', 'web', () => {
     return gulp.watch(['src/**/*.ts'], gulp.series('default'));
-});
+}));

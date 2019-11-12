@@ -16,3 +16,6 @@ input struct is a grid of each tile
 8 = empty
 
 output is direction, and turn number as an increase in turn number signals its not dead
+
+check available space in a confined area, and avoid it if its smaller that the snake
+create and start games in angular app

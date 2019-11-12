@@ -9,14 +9,11 @@ import { Tak } from "./snakes/tak";
 import { TailChase } from "./snakes/tail-chase";
 import { Aldo } from "./snakes/aldo";
 import { Dunno } from "./snakes/dunno";
+import snakes from "./snakes";
 
-// Logger.enabled = true;
-// Writer.enabled = true;
+Logger.enabled = true;
+Writer.enabled = true;
 
-new Server(9001, new ProjectZ(), true);
-new Server(9002, new KeepAway(), true);
-new Server(9003, new Rando(), true);
-new Server(9004, new Tak(), true);
-new Server(9005, new TailChase(), true);
-new Server(9006, new Aldo(), true);
-new Server(9007, new Dunno(), true);
+for (const port in snakes) {
+    new Server(parseInt(port), new snakes[port](), false);
+}

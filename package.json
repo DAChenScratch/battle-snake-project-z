@@ -1,50 +1,55 @@
 {
-  "name": "battlesnake-project-z",
-  "description": "Project Z BattleSnake AI",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "brain.js": "^1.6.1",
-    "crc-32": "^1.2.0",
-    "cross-env": "^5.2.0",
-    "express": "^4.16.4",
-    "morgan": "^1.9.1",
-    "pathfinding": "git+https://github.com/paulrobello/PathFinding.js.git#3840d6e60b88a71c38ee5c356542b4a5883f3444"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
-    "@types/express": "^4.16.1",
-    "@types/jquery": "^3.3.29",
-    "@types/node": "^11.9.5",
-    "babelify": "^10.0.0",
-    "browserify": "^16.2.3",
-    "forever": "^0.15.3",
-    "gulp": "^4.0.0",
-    "gulp-babel": "^8.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^5.0.0",
-    "gulp-uglify": "^3.0.1",
-    "gulplog": "^1.0.0",
-    "nodemon": "^1.18.10",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.3333",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
-  },
-  "main": "index.js",
-  "engines": {
-    "node": ">=8.x"
-  },
-  "scripts": {
-    "nodemon": "nodemon --delay 500ms --watch dist dist/server/index.js",
-    "server": "forever start dist/server/index.js"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "games/*",
-      "docs/*"
-    ]
-  }
+    "name": "battlesnake-project-z",
+    "description": "Project Z BattleSnake AI",
+    "version": "0.0.0",
+    "private": true,
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "brain.js": "^1.6.1",
+        "crc-32": "^1.2.0",
+        "cross-env": "^5.2.0",
+        "express": "^4.16.4",
+        "morgan": "^1.9.1",
+        "pathfinding": "git+https://github.com/paulrobello/PathFinding.js.git#3840d6e60b88a71c38ee5c356542b4a5883f3444",
+        "websocket": "^1.0.30"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.3.4",
+        "@babel/preset-env": "^7.3.4",
+        "@types/angular": "^1.6.56",
+        "@types/express": "^4.16.1",
+        "@types/jquery": "^3.3.29",
+        "@types/node": "^11.9.5",
+        "@types/websocket": "^1.0.0",
+        "babelify": "^10.0.0",
+        "browserify": "^16.2.3",
+        "concurrently": "^5.0.0",
+        "forever": "^0.15.3",
+        "gulp": "^4.0.0",
+        "gulp-babel": "^8.0.0",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-typescript": "^5.0.0",
+        "gulp-uglify": "^3.0.1",
+        "gulplog": "^1.0.0",
+        "nodemon": "^1.18.10",
+        "ts-node": "^8.0.2",
+        "typescript": "^3.3.3333",
+        "vinyl-buffer": "^1.0.1",
+        "vinyl-source-stream": "^2.0.0"
+    },
+    "main": "index.js",
+    "engines": {
+        "node": ">=8.x"
+    },
+    "scripts": {
+        "nodemon": "nodemon --delay 500ms --watch dist dist/server/index.js",
+        "server": "forever start dist/server/index.js",
+        "dev": "concurrently --names \"NODEMON,GULP,ENGINE\" \"npm run nodemon\" \"gulp watch\" \"cd engine && engine.exe dev\""
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "games/*",
+            "docs/*"
+        ]
+    }
 }

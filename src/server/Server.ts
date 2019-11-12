@@ -4,7 +4,6 @@ const logger = require('morgan');
 const {
     notFoundHandler,
     genericErrorHandler,
-    poweredByHandler
 } = require('./handlers');
 
 import { Request, Response } from 'express';
@@ -19,6 +18,7 @@ import { TailType } from '../types/TailType';
 import { dataToInput } from '../nn/nn-bt-data-grid';
 import { moveToOutput } from '../nn/nn-bt-data';
 import { HttpError } from './handlers';
+import { WebSocketServer } from './WebSocketServer';
 
 export interface ServerStartResponse {
     color: Color,
@@ -47,6 +47,8 @@ export class Server {
         private snake: Snake,
         private saveGame: boolean,
     ) {
+        const webSocketServer = new WebSocketServer(this.port, snake);
+
         const app = express();
         app.set('port', this.port);
 
@@ -54,7 +56,6 @@ export class Server {
 
         app.use(logger('dev'));
         app.use(bodyParser.json());
-        app.use(poweredByHandler);
 
         app.post('/start', (request: Request, response: Response) => {
             try {
@@ -70,6 +71,7 @@ export class Server {
                         trainingData: [],
                     };
                 }
+                webSocketServer.broadcast('start', request.body);
 
                 logs.splice(0, logs.length);
                 return response.json(startResponse);
@@ -98,6 +100,8 @@ export class Server {
                     // this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
                 }
 
+                webSocketServer.broadcast('move', request.body);
+
                 logs.splice(0, logs.length);
                 return response.json(moveResponse);
             } catch (e) {
@@ -113,6 +117,9 @@ export class Server {
                     writeFile(request.body.you.id, this.gameLog[request.body.you.id]);
                     delete this.gameLog[request.body.you.id];
                 }
+
+                webSocketServer.broadcast('end', request.body);
+
                 return response.json({});
             } catch (e) {
                 console.error(e);
@@ -134,9 +141,20 @@ export class Server {
             if (req.baseUrl === '') {
                 res.status(200);
                 return res.send(`
-                    ${this.snake.constructor.name}<br/>
-                    Battlesnake documentation can be found at
-                    <a href="https://docs.battlesnake.io">https://docs.battlesnake.io</a>.
+                    <link href="https://fonts.googleapis.com/css?family=Roboto:100i&display=swap" rel="stylesheet">
+                    <style>
+                        body {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            text-align: center;
+                            font-family: 'Roboto', sans-serif;
+                            font-weight: 300;
+                            font-size: 32px;
+                            color: #444;
+                        }
+                    </style>
+                        <h1>${this.snake.constructor.name}</h1>
                 `);
             }
 
