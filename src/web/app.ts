@@ -43,7 +43,7 @@ app.controller('RootController', [
                 started: new Date(),
                 finished: null,
                 start: null,
-                moves: [],
+                moves: 0,
                 end: null,
             };
             $scope.games.push(game);
