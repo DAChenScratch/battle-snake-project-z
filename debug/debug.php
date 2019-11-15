@@ -1,7 +1,9 @@
 <?php
 $files = glob(__DIR__ . '/../games/*.json');
 $files = array_map(function ($file) {
+    $content = json_decode(file_get_contents($file), true);
     return [
+        'content' => $content,
         'file' => $file,
         'mtime' => filemtime($file),
         'size' => filesize($file),
@@ -120,9 +122,10 @@ usort($files, function ($a, $b) {
         </div>
         <div class="scroll">
             <div class="games">
-                <?php foreach ($files as $file): ?>
-                    <div class="game" data-game="<?=basename($file['file']);?>"><?=date(DATE_ISO8601, $file['mtime']);?></div>
-                <?php endforeach;?>
+                <?php foreach ($files as $file) : ?>
+                    <div class="game" data-game="<?= basename($file['file']); ?>"><?= date(DATE_ISO8601, $file['mtime']); ?> <?= $file['content']['snake']; ?></div>
+                <?php endforeach; ?>
+                <a href="debug-delete.php">Delete</a>
             </div>
         </div>
         <div class="scroll">
@@ -133,7 +136,11 @@ usort($files, function ($a, $b) {
         </pre>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.js"></script>
     <script src="bundle.js?cache=<?= time(); ?>"></script>
-    <script>loadGrid()</script>
+    <script>
+        loadGrid()
+    </script>
 </body>
+
 </html>

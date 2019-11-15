@@ -66,6 +66,7 @@ export class Server {
                 if (this.saveGame) {
                     request.body.log = clone(logs);
                     this.gameLog[request.body.you.id] = {
+                        snake: snake.constructor.name,
                         start: request.body,
                         moves: [],
                         trainingData: [],

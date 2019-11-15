@@ -33,6 +33,7 @@
         "gulplog": "^1.0.0",
         "nodemon": "^1.18.10",
         "ts-node": "^8.0.2",
+        "tslint": "^5.20.1",
         "typescript": "^3.3.3333",
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0"
@@ -44,7 +45,7 @@
     "scripts": {
         "nodemon": "nodemon --delay 500ms --watch dist dist/server/index.js",
         "server": "forever start dist/server/index.js",
-        "dev": "concurrently --names \"NODEMON,GULP,ENGINE\" \"npm run nodemon\" \"gulp watch\" \"cd engine && engine.exe dev\""
+        "dev": "concurrently --names \"NODEMON,GULP,ENGINE\" \"npm run nodemon\" \"gulp watch\" \"cd engine && ./engine dev\""
     },
     "nodemonConfig": {
         "ignore": [

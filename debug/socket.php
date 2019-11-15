@@ -9,25 +9,25 @@
 <body ng-cloak>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <button ng-click="start()" class="btn btn-primary">Start</button>
                 <button ng-click="stop()" class="btn btn-primary">Stop</button>
                 <div class="border p-2">
                     <div ng-repeat="snake in snakes">
-                        {{ snake.name }} {{ snake.port }}
+                        {{ snake.name }} <small>port:</small> {{ snake.port }} <small>wins:</small> {{ snake.wins.length }}
                     </div>
                 </div>
                 <div ng-repeat="game in games">
                     <div class="border p-2">
                         <a ng-click="watch(game.id)" href="#">Watch</a>
-                        {{ game.id }}
-                        moves: {{ game.moves.length }}
-                        winner: {{ game.end.board.snakes[0].name }}
+                        <small>game:</small> {{ $index + 1 }}
+                        <small>moves:</small> {{ game.moves }}
+                        <small>winner:</small> {{ game.winner.name }}
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <iframe frameborder="0" id="board" width="100%" height="800px" src="http://localhost:3009"></iframe>
             </div>
         </div>
