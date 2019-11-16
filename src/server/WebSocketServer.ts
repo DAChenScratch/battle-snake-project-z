@@ -38,6 +38,7 @@ export class WebSocketServer {
             this.send(connection, 'snake', {
                 name: this.snake.constructor.name,
                 port: this.port,
+                info: this.snake.info,
             });
         });
     }

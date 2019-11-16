@@ -18,7 +18,7 @@ export class KeepAway {
     }
     move(data: BTData) {
         let direction;
-        if (data.you.health < 20) {
+        if (data.you.health < 10) {
             direction = moveTowardsFoodPf(data);
         }
         if (!direction) {

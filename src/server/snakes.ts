@@ -6,6 +6,7 @@ import { Tak } from "./snakes/tak";
 import { TailChase } from "./snakes/tail-chase";
 import { Aldo } from "./snakes/aldo";
 import { Dunno } from "./snakes/dunno";
+import { WorkItOut } from "./snakes/work-it-out";
 
 export default {
     9001: ProjectZ,
@@ -15,4 +16,5 @@ export default {
     9005: TailChase,
     9006: Aldo,
     9007: Dunno,
+    // 9008: WorkItOut,
 };

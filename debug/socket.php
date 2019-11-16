@@ -17,12 +17,16 @@
                         {{ snake.name }} <small>port:</small> {{ snake.port }} <small>wins:</small> {{ snake.wins.length }}
                     </div>
                 </div>
-                <div ng-repeat="game in games">
+                <div ng-repeat="game in games | orderBy: '-moves'">
                     <div class="border p-2">
                         <a ng-click="watch(game.id)" href="#">Watch</a>
                         <small>game:</small> {{ $index + 1 }}
                         <small>moves:</small> {{ game.moves }}
                         <small>winner:</small> {{ game.winner.name }}
+                        <div ng-repeat="snake in game.snakes">
+                            {{ snake.name }}
+                            <div ng-repeat="op in snake.ops track by $index">{{ op }}</div>
+                        </div>
                     </div>
                 </div>
             </div>

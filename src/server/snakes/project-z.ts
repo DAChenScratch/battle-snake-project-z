@@ -6,6 +6,7 @@ import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
+import { moveAway } from '../../lib/moveAway';
 
 export class ProjectZ {
     start(data: BTData) {
@@ -19,7 +20,7 @@ export class ProjectZ {
         let direction;
         direction = moveTowardsFoodPf(data);
         if (!direction) {
-            direction = moveTowardsEnemy(data);
+            direction = moveAway(data);
         }
         if (!direction) {
             direction = smartRandomMove(data);

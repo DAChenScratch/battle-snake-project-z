@@ -17,6 +17,7 @@ export class WebSocketClient {
 
     handleWebsocketMessage(string) {
         const { message, data } = JSON.parse(string.data);
+        // console.log('Received message', message);
         switch (message) {
             case 'snake':
                 data.wins = [];
@@ -24,26 +25,29 @@ export class WebSocketClient {
                 break;
         }
 
-        if (data.game) {
-            const game = this.scope.games.find(g => !g.id || g.id === data.game.id);;
+        const body = data.body;
+
+        if (body && body.game) {
+            const game = this.scope.games.find(g => !g.id || g.id === body.game.id);;
             if (!game) {
                 console.log('Unknown game', game);
                 return;
             }
             switch (message) {
                 case 'start':
-                    game.id = data.game.id;
-                    game.start = data;
+                    game.id = body.game.id;
+                    game.start = body;
+                    game.snakes.push(data.snake);
                     break;
                 case 'move':
                     game.moves++;
-                    // game.moves.push(data);
+                    // game.moves.push(body);
                     break;
                 case 'end':
-                    game.end = data;
+                    game.end = body;
                     game.finished = new Date();
-                    if (data.board.snakes[0]) {
-                        game.winner = this.scope.snakes.find(s => s.name == data.board.snakes[0].name);
+                    if (body.board.snakes[0]) {
+                        game.winner = this.scope.snakes.find(s => s.name == body.board.snakes[0].name);
                         if (game.winner.wins.indexOf(game.id) === -1) {
                             game.winner.wins.push(game.id);
                         }

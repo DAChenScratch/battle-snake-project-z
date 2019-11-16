@@ -31,6 +31,8 @@ export interface ServerMoveResponse {
 }
 
 export interface Snake {
+    server: Server,
+    info: any,
     start: (data: BTData) => ServerStartResponse,
     move: (data: BTData) => ServerMoveResponse,
 }
@@ -42,12 +44,15 @@ const clone = (data) => {
 export class Server {
     private gameLog = {};
 
+    public webSocketServer: WebSocketServer;
+
     constructor(
         private port: number,
         private snake: Snake,
         private saveGame: boolean,
     ) {
-        const webSocketServer = new WebSocketServer(this.port, snake);
+        snake.server = this;
+        this.webSocketServer = new WebSocketServer(this.port, snake);
 
         const app = express();
         app.set('port', this.port);
@@ -72,7 +77,10 @@ export class Server {
                         trainingData: [],
                     };
                 }
-                webSocketServer.broadcast('start', request.body);
+                this.webSocketServer.broadcast('start', {
+                    snake: snake.info,
+                    body: request.body,
+                });
 
                 logs.splice(0, logs.length);
                 return response.json(startResponse);
@@ -101,7 +109,10 @@ export class Server {
                     // this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
                 }
 
-                webSocketServer.broadcast('move', request.body);
+                this.webSocketServer.broadcast('move', {
+                    snake: snake.info,
+                    body: request.body,
+                });
 
                 logs.splice(0, logs.length);
                 return response.json(moveResponse);
@@ -119,7 +130,10 @@ export class Server {
                     delete this.gameLog[request.body.you.id];
                 }
 
-                webSocketServer.broadcast('end', request.body);
+                this.webSocketServer.broadcast('end', {
+                    snake: snake.info,
+                    body: request.body,
+                });
 
                 return response.json({});
             } catch (e) {

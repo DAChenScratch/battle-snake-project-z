@@ -45,6 +45,7 @@ app.controller('RootController', [
                 start: null,
                 moves: 0,
                 end: null,
+                snakes: [],
             };
             $scope.games.push(game);
             fetch('http://localhost:3005/games', {
