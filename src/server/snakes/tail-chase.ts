@@ -8,8 +8,9 @@ import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { moveAway } from '../../lib/moveAway';
+import { BaseSnake } from './base-snake';
 
-export class TailChase {
+export class TailChase extends BaseSnake {
     start(data: BTData) {
         return {
             color: Color.GREEN,

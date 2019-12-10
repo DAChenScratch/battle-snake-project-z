@@ -15,8 +15,6 @@ import { MoveDirection } from '../types/MoveDirection';
 import { Color } from '../types/Color';
 import { HeadType } from '../types/HeadType';
 import { TailType } from '../types/TailType';
-import { dataToInput } from '../nn/nn-bt-data-grid';
-import { moveToOutput } from '../nn/nn-bt-data';
 import { HttpError } from './handlers';
 import { WebSocketServer } from './WebSocketServer';
 
@@ -74,7 +72,6 @@ export class Server {
                         snake: snake.constructor.name,
                         start: request.body,
                         moves: [],
-                        trainingData: [],
                     };
                 }
                 this.webSocketServer.broadcast('start', {
@@ -97,16 +94,10 @@ export class Server {
                 const moveResponse = this.snake.move(data);
                 log('moveResponse', moveResponse);
 
-                // const trainingData = {
-                //     input: dataToInput(request.body),
-                //     output: moveToOutput(moveResponse),
-                // }
-
                 if (this.saveGame) {
                     delete data.cache;
                     request.body.log = clone(logs);
                     this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
-                    // this.gameLog[request.body.you.id].trainingData[request.body.turn] = trainingData;
                 }
 
                 this.webSocketServer.broadcast('move', {

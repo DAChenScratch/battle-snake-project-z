@@ -43,6 +43,7 @@ usort($files, function ($a, $b) {
     <div class="wrapper">
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.js"></script>
     <script src="bundle.js"></script>
     <script>train()</script>
 </body>

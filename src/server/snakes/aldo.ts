@@ -4,13 +4,15 @@ import { KeepAway } from './keep-away';
 import { Rando } from './rando';
 import { Tak } from './tak';
 import { TailChase } from './tail-chase';
+import { BaseSnake } from './base-snake';
 
 const CRC32 = require('crc-32');
 
-export class Aldo {
+export class Aldo extends BaseSnake {
     private options: any[];
 
     constructor() {
+        super();
         this.options = [ProjectZ, KeepAway, Rando, Tak, TailChase];
     }
 

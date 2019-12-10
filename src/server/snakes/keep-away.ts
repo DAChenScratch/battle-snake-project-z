@@ -7,8 +7,9 @@ import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { moveAway } from '../../lib/moveAway';
 import { smartRandomMove } from '../../lib/smartRandomMove';
+import { BaseSnake } from './base-snake';
 
-export class KeepAway {
+export class KeepAway extends BaseSnake {
     start(data: BTData) {
         return {
             color: Color.YELLOW,

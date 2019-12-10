@@ -6,20 +6,24 @@ import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
+import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
+import { moveTowardsTail } from '../../lib/moveTowardsTail';
+import { moveTowardsKill } from '../../lib/moveTowardsKill';
 
-export class Rando extends BaseSnake {
+export class ProjectZ2 extends BaseSnake {
     start(data: BTData) {
         return {
-            color: Color.CARROT,
-            headType: HeadType.EVIL,
-            tailType: TailType.FAT_RATTLE,
+            color: Color.GREY,
+            headType: HeadType.SAND_WORM,
+            tailType: TailType.ROUND_BUM,
         };
     }
     move(data: BTData) {
         let direction;
-        if (data.you.health < 20) {
-            direction = moveTowardsFoodPf(data);
+        direction = moveTowardsFoodPf(data);
+        if (!direction) {
+            direction = moveAway(data);
         }
         if (!direction) {
             direction = smartRandomMove(data);

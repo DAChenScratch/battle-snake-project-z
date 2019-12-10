@@ -6,8 +6,9 @@ import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
+import { BaseSnake } from './base-snake';
 
-export class Tak {
+export class Tak extends BaseSnake {
     start(data: BTData) {
         return {
             color: Color.RED,

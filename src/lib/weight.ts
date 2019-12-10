@@ -66,6 +66,29 @@ const isDeadEnd = (data: BTData, x: number, y: number) => {
     return false;
 };
 
+const isNearTail = (data: BTData, x: number, y: number) => {
+    for (const snake of data.board.snakes) {
+        const body = snake.body;
+        const part = body[body.length - 1];
+        if (x == part.x && y == part.y) {
+            return true;
+        }
+        if (x + 1 == part.x && y == part.y) {
+            return true;
+        }
+        if (x - 1 == part.x && y == part.y) {
+            return true;
+        }
+        if (x == part.x && y + 1 == part.y) {
+            return true;
+        }
+        if (x == part.x && y - 1 == part.y) {
+            return true;
+        }
+    }
+    return false;
+};
+
 export function weight(data: BTData, x: number, y: number, blockHeads = true) {
     const c = cache(data, 'weight', {});
     const key = x + ':' + y + ':' + (blockHeads ? 1 : 0);
@@ -94,8 +117,11 @@ export function weightCache(data: BTData, x: number, y: number, blockHeads = tru
             }
         }
     }
+    if (isNearTail(data, x, y)) {
+        return 75;
+    }
 
-    if (isDeadEnd(data, x, y)) {
+    if (isDeadEnd(data, x, y) && !isNearTail(data, x, y)) {
         return 0;
     }
 
@@ -122,36 +148,40 @@ export function weightCache(data: BTData, x: number, y: number, blockHeads = tru
     for (const snake of data.board.snakes) {
         const body = snake.body;
         for (const [p, part] of body.entries()) {
+            let tailWeight = 40;
+            if (p == body.length - 1) {
+                tailWeight = 55;
+            }
             if (x + 1 == part.x && y == part.y) {
-                result = Math.min(result, 40);
+                result = Math.min(result, tailWeight);
             }
             if (x - 1 == part.x && y == part.y) {
-                result = Math.min(result, 40);
+                result = Math.min(result, tailWeight);
             }
             if (x == part.x && y + 1 == part.y) {
-                result = Math.min(result, 40);
+                result = Math.min(result, tailWeight);
             }
             if (x == part.x && y - 1 == part.y) {
-                result = Math.min(result, 40);
+                result = Math.min(result, tailWeight);
             }
         }
     }
 
 
     if (x == 0) {
-        result = Math.min(result, 40);
+        result = Math.min(result, 35);
     }
 
     if (y == 0) {
-        result = Math.min(result, 40);
+        result = Math.min(result, 35);
     }
 
     if (x == data.board.width - 1) {
-        result = Math.min(result, 40);
+        result = Math.min(result, 35);
     }
 
     if (y == data.board.height - 1) {
-        result = Math.min(result, 40);
+        result = Math.min(result, 35);
     }
 
     result = Math.min(result, 50);

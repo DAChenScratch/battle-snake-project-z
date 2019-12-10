@@ -12,9 +12,10 @@
             <div class="col-md-5">
                 <button ng-click="start()" class="btn btn-primary">Start</button>
                 <button ng-click="stop()" class="btn btn-primary">Stop</button>
+                <input type="checkbox" ng-model="autoStart" ng-change="updateAutoStart()" /> Auto Start
                 <div class="border p-2">
-                    <div ng-repeat="snake in snakes">
-                        {{ snake.name }} <small>port:</small> {{ snake.port }} <small>wins:</small> {{ snake.wins.length }}
+                    <div ng-repeat="snake in snakes | orderBy: '-wins.length'">
+                        {{ snake.name }} <small>port:</small> {{ snake.port }} <small>wins:</small> {{ snake.wins.length }} {{ percentWins(snake.wins.length) }}%
                     </div>
                 </div>
                 <div ng-repeat="game in games | orderBy: '-moves'">
@@ -24,7 +25,8 @@
                         <small>moves:</small> {{ game.moves }}
                         <small>winner:</small> {{ game.winner.name }}
                         <div ng-repeat="snake in game.snakes">
-                            {{ snake.name }}
+                            <b>{{ snake.name }}</b>
+                            <small>{{ snake }}</small>
                             <div ng-repeat="op in snake.ops track by $index">{{ op }}</div>
                         </div>
                     </div>

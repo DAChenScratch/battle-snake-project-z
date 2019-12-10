@@ -1,33 +1,36 @@
 import { BTData } from '../../types/BTData';
-import { ProjectZ } from './project-z';
-import { KeepAway } from './keep-away';
-import { Rando } from './rando';
-import { Tak } from './tak';
-import { TailChase } from './tail-chase';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
+import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
+import { randomMove } from '../../lib/randomMove';
+import { smartRandomMove } from '../../lib/smartRandomMove';
+import { moveAway } from '../../lib/moveAway';
+import { BaseSnake } from './base-snake';
 
-export class Dunno {
-    private options: any[];
-
-    constructor() {
-        this.options = [ProjectZ, KeepAway, Rando, Tak, TailChase];
-    }
-
+export class Dunno extends BaseSnake {
     start(data: BTData) {
         return {
-            color: Color.BLUE,
-            headType: HeadType.SAFE,
+            color: Color.GREY,
+            headType: HeadType.SAND_WORM,
             tailType: TailType.ROUND_BUM,
         };
     }
 
     move(data: BTData) {
-        return this.snake(data).move(data);
-    }
-
-    private snake(data: BTData) {
-        return new this.options[Math.floor(Math.random() * this.options.length)]();
+        let direction;
+        direction = moveTowardsFoodPf(data);
+        if (!direction) {
+            direction = moveAway(data);
+        }
+        if (!direction) {
+            direction = smartRandomMove(data);
+        }
+        if (!direction) {
+            direction = randomMove(data);
+        }
+        return {
+            move: direction,
+        };
     }
 }

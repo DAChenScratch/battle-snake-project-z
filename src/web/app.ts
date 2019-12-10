@@ -10,6 +10,7 @@ app.controller('RootController', [
     function ($scope) {
         $scope.snakes = [];
         $scope.games = [];
+        $scope.autoStart = localStorage.getItem('autoStart') == 'on';
 
         let started = null;
         const clients = [];
@@ -61,7 +62,7 @@ app.controller('RootController', [
         };
         $scope.start();
 
-        $scope.$on('end', function(event, args) {
+        $scope.$on('end', (event, args) => {
             if (!started) {
                 return;
             }
@@ -70,7 +71,9 @@ app.controller('RootController', [
                     return;
                 }
             }
-            $scope.start();
+            if ($scope.autoStart) {
+                $scope.start();
+            }
         });
 
         $scope.stop = () => {
@@ -79,6 +82,14 @@ app.controller('RootController', [
 
         $scope.watch = (gameId) => {
             $('#board').attr('src', `http://localhost:3009?engine=http://localhost:3005&game=${gameId}`);
+        };
+
+        $scope.updateAutoStart = () => {
+            localStorage.setItem('autoStart', $scope.autoStart ? 'on' : 'off');
+        };
+
+        $scope.percentWins = (wins) => {
+            return (100 / $scope.games.length * wins).toFixed(1);
         };
     },
 ]);

@@ -3,12 +3,13 @@ import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
 import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
-import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveAway } from '../../lib/moveAway';
+import { BaseSnake } from './base-snake';
+import { moveTowardsKill } from '../../lib/moveTowardsKill';
 
-export class ProjectZ {
+export class ProjectZ extends BaseSnake {
     start(data: BTData) {
         return {
             color: Color.PINK,
@@ -16,9 +17,13 @@ export class ProjectZ {
             tailType: TailType.BLOCK_BUM,
         };
     }
+
     move(data: BTData) {
         let direction;
-        direction = moveTowardsFoodPf(data);
+        direction = moveTowardsKill(data);
+        if (!direction) {
+            direction = moveTowardsFoodPf(data);
+        }
         if (!direction) {
             direction = moveAway(data);
         }

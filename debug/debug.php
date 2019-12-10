@@ -1,17 +1,23 @@
 <?php
 $files = glob(__DIR__ . '/../games/*.json');
 $files = array_map(function ($file) {
-    $content = json_decode(file_get_contents($file), true);
     return [
-        'content' => $content,
         'file' => $file,
         'mtime' => filemtime($file),
         'size' => filesize($file),
     ];
 }, $files);
 usort($files, function ($a, $b) {
-    return $a['mtime'] - $b['mtime'];
+    return $b['mtime'] <=> $a['mtime'];
 });
+$files = array_slice($files, 0, 50);
+$files = array_map(function ($file) {
+    $content = json_decode(file_get_contents($file['file']), true);
+    $file['content'] = [
+        'snake' => $content['snake'],
+    ];
+    return $file;
+}, $files);
 ?>
 <html>
 
@@ -41,9 +47,13 @@ usort($files, function ($a, $b) {
 
         .games,
         .moves {
-            flex-direction: column-reverse;
+            flex-direction: column;
             display: flex;
             justify-content: flex-end;
+        }
+
+        .moves {
+            flex-direction: column-reverse;
         }
 
         .game,
@@ -122,10 +132,10 @@ usort($files, function ($a, $b) {
         </div>
         <div class="scroll">
             <div class="games">
+                <a href="debug-delete.php">Delete</a>
                 <?php foreach ($files as $file) : ?>
                     <div class="game" data-game="<?= basename($file['file']); ?>"><?= date(DATE_ISO8601, $file['mtime']); ?> <?= $file['content']['snake']; ?></div>
                 <?php endforeach; ?>
-                <a href="debug-delete.php">Delete</a>
             </div>
         </div>
         <div class="scroll">
