@@ -13,9 +13,9 @@ import { moveTowardsKill } from '../../lib/moveTowardsKill';
 export class Dunno extends BaseSnake {
     start(data: BTData) {
         return {
-            color: Color.PINK,
-            headType: HeadType.BELUGA,
-            tailType: TailType.BLOCK_BUM,
+            color: Color.NEPHRITIS,
+            headType: HeadType.SAND_WORM,
+            tailType: TailType.ROUND_BUM,
         };
     }
 
