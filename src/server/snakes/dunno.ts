@@ -21,9 +21,9 @@ export class Dunno extends BaseSnake {
 
     move(data: BTData) {
         let direction;
-        direction = moveTowardsKill(data);
+        direction = moveTowardsFoodPf(data);
         if (!direction) {
-            direction = moveTowardsFoodPf(data);
+            direction = moveTowardsKill(data);
         }
         if (!direction) {
             direction = moveAway(data);
