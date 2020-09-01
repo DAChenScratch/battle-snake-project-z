@@ -16,7 +16,7 @@ export class Dunno extends BaseSnake implements ISnake {
     public port: number = 9007;
     public color = Color.NEPHRITIS;
     public headType = HeadType.SAND_WORM;
-    public tailType = TailType.ROUND_BUM;
+    public tailType = TailType.PIXEL;
 
     move(data: BTData) {
         let direction;

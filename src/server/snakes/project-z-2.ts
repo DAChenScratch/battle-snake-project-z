@@ -16,7 +16,7 @@ export class ProjectZ2 extends BaseSnake implements ISnake {
     public port: number = 9009;
 
     public color = Color.GREY;
-    public headType = HeadType.SAND_WORM;
+    public headType = HeadType.SILLY;
     public tailType = TailType.ROUND_BUM;
 
     move(data: BTData) {

@@ -13,7 +13,7 @@ export class Rando extends BaseSnake implements ISnake {
     public port: number = 9003;
 
     public color = Color.CARROT;
-    public headType = HeadType.EVIL;
+    public headType = HeadType.REGULAR;
     public tailType = TailType.FAT_RATTLE;
 
     move(data: BTData) {

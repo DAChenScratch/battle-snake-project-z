@@ -10,7 +10,7 @@ export class LookAhead extends BaseSnake implements ISnake {
     public port: number = 9010;
 
     public color = Color.PLUM;
-    public headType = HeadType.TONGUE;
+    public headType = HeadType.EVIL;
     public tailType = TailType.SHARP;
 
     move(data: BTData) {

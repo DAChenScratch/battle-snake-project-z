@@ -18,7 +18,7 @@ export class Aldo extends BaseSnake implements ISnake {
 
     public color = Color.POMEGRANATE;
     public headType = HeadType.TONGUE;
-    public tailType = TailType.FRECKLED;
+    public tailType = TailType.SKINNY;
 
     constructor() {
         super();

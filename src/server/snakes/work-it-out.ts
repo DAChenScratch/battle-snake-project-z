@@ -17,7 +17,7 @@ export class WorkItOut extends BaseSnake implements ISnake {
     public port: number = 9008;
 
     public color = Color.BROWN;
-    public headType = HeadType.SAND_WORM;
+    public headType = HeadType.SMILE;
     public tailType = TailType.SHARP;
 
     private opsCount: number;
