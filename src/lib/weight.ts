@@ -66,6 +66,14 @@ const isDeadEnd = (data: BTData, x: number, y: number) => {
     return false;
 };
 
+const isOwnTail = (data: BTData, x: number, y: number) => {
+    const part = data.you.body[data.you.body.length - 1];
+    if (x == part.x && y == part.y) {
+        return true;
+    }
+    return false;
+};
+
 const isNearTail = (data: BTData, x: number, y: number) => {
     for (const snake of data.board.snakes) {
         const body = snake.body;
@@ -117,6 +125,11 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
             }
         }
     }
+
+    if (isOwnTail(data, x, y)) {
+        return 100;
+    }
+
     if (isNearTail(data, x, y)) {
         return 75;
     }
