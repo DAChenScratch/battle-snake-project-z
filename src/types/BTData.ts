@@ -1,18 +1,22 @@
 export interface BTData {
     game: {
         id: string,
+        timeout: number,
     },
     turn: number,
-    board: {
-        width: number,
-        height: number,
-        food: BTXY[],
-        snakes: BTSnake[],
-    },
+    board: BTBoard,
     you: BTSnake,
     log: any[],
     cache: any,
     grid: any[]
+}
+
+export interface BTBoard {
+    width: number,
+    height: number,
+    food: BTXY[],
+    hazards: BTXY[],
+    snakes: BTSnake[],
 }
 
 export interface BTXY {
@@ -25,6 +29,10 @@ export interface BTSnake {
     name: string,
     health: number,
     body: BTXY[],
+    head: BTXY,
+    length: number,
+    shout: string,
+    squad: string,
 }
 
 export function initBTData(data: BTData): BTData {

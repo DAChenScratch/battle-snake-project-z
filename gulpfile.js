@@ -33,5 +33,5 @@ gulp.task('web', () => {
 gulp.task('default', gulp.series('ts', 'web'));
 
 gulp.task('watch', gulp.series('ts', 'web', () => {
-    return gulp.watch(['src/**/*.ts'], gulp.series('default'));
+    return gulp.watch(['src/**/*.ts', 'env.js'], gulp.series('default'));
 }));

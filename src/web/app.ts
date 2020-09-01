@@ -1,51 +1,76 @@
 import { WebSocketClient } from "./WebSocketClient";
 import snakes from "../server/snakes";
-import { ISnake } from '../server/snakes/snake-interface';
-import { ClientSnake } from '../server/snakes/client-snake';
 import { GameManager } from './GameManager';
+import { AngularScope } from './angular-scope';
+import { response } from 'express';
 
 const app = angular.module('battleSnake', []);
 
-interface RootControllerScope {
+interface RootControllerScope extends AngularScope {
     gameManager: GameManager,
-    clientSnakes: ClientSnake[],
-    autoStart: boolean,
+    webSocketClients: WebSocketClient[],
+    options: Options,
+
     start: () => void,
     stop: () => void,
-    $on: (event: string, callback: () => void) => void,
-    $apply: () => void,
     watch: (gameId: string) => void,
     updateAutoStart: () => void,
     percentWins: (wins: number) => void,
+    getAverageMoves: () => number,
 }
 
+interface Options {
+    boardWidth: number,
+    boardHeight: number,
+    startingFood: number,
+    foodSpawnTime: number,
+    autoStart: boolean,
+    enabledSnakes: EnabledSnake,
+    orderGames: string,
+}
+
+interface EnabledSnake {
+    [id: string]: boolean;
+}
 app.controller('RootController', [
     '$scope',
     function ($scope: RootControllerScope) {
         $scope.gameManager = new GameManager();
-        $scope.clientSnakes = snakes.map(s => {
-            return new ClientSnake(s, $scope.gameManager);
+        $scope.webSocketClients = snakes.map(snake => {
+            return new WebSocketClient(snake, snakes, $scope.gameManager, $scope);
         });
-        $scope.autoStart = localStorage.getItem('autoStart') == 'on';
+        try {
+            $scope.options = JSON.parse(localStorage.getItem('options'));
+        } catch (error) {
+            console.error('Error parsing local storage options', error, localStorage.getItem('options'));
+        }
+        if (!$scope.options) {
+            $scope.options = {
+                boardWidth: 10,
+                boardHeight: 10,
+                startingFood: 10,
+                foodSpawnTime: 10,
+                autoStart: false,
+                enabledSnakes: {},
+                orderGames: '$index',
+            };
+        }
+
 
         let started = null;
-
-        const width = 10;
-        const height = 10;
-        const food = 10;
-        const MaxTurnsToNextFoodSpawn = 10;
 
         $scope.start = () => {
             started = true;
 
             const config = {
-                width,
-                height,
-                food,
-                MaxTurnsToNextFoodSpawn,
-                snakes: $scope.clientSnakes.filter(s => s.snake.enabled).map(s => s.snake.config),
+                width: $scope.options.boardWidth,
+                height: $scope.options.boardHeight,
+                food: $scope.options.startingFood,
+                MaxTurnsToNextFoodSpawn: $scope.options.foodSpawnTime,
+                snakes: $scope.webSocketClients
+                    .filter(webSocketClient => $scope.options.enabledSnakes[webSocketClient.snake.name])
+                    .map(webSocketClient => webSocketClient.snake.config),
             };
-            console.log(config);
             const game = {
                 id: null,
                 config,
@@ -60,7 +85,7 @@ app.controller('RootController', [
                 method: 'POST',
                 body: JSON.stringify(config)
             })
-                .then(resp => resp.json())
+                .then(response => response.json())
                 .then(json => game.id = json.ID)
                 .then(_ => fetch(`http://localhost:3005/games/${game.id}/start`, {
                     method: 'POST',
@@ -70,19 +95,19 @@ app.controller('RootController', [
 
         $scope.start();
 
-        // $scope.$on('end', () => {
-        //     if (!started) {
-        //         return;
-        //     }
-        //     for (const game of $scope.games) {
-        //         if (!game.finished) {
-        //             return;
-        //         }
-        //     }
-        //     if ($scope.autoStart) {
-        //         $scope.start();
-        //     }
-        // });
+        $scope.$on('end', () => {
+            if (!started) {
+                return;
+            }
+            for (const game of $scope.gameManager.games) {
+                if (!game.finished) {
+                    return;
+                }
+            }
+            if ($scope.options.autoStart) {
+                $scope.start();
+            }
+        });
 
         $scope.stop = () => {
             started = false;
@@ -92,14 +117,18 @@ app.controller('RootController', [
             $('#board').attr('src', `http://localhost:3009?engine=http://localhost:3005&game=${gameId}`);
         };
 
-        $scope.updateAutoStart = () => {
-            localStorage.setItem('autoStart', $scope.autoStart ? 'on' : 'off');
+        $scope.getAverageMoves = () => {
+            return Math.round($scope.gameManager.games.reduce((c, n) => c + n.moves, 0) / $scope.gameManager.games.length);
         };
+
+        $scope.$watch('options', () => {
+            localStorage.setItem('options', JSON.stringify($scope.options));
+        }, true);
 
         $scope.percentWins = (wins) => {
             let sum = 0;
-            for (const clientSnake of $scope.clientSnakes) {
-                sum += clientSnake.snake.wins;
+            for (const webSocketClient of $scope.webSocketClients) {
+                sum += webSocketClient.snake.wins;
             }
             if (sum === 0) {
                 return 0;

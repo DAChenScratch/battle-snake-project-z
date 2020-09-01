@@ -1,9 +1,4 @@
-import { ISnake } from './snake-interface';
 import { Server } from '../Server';
-import { WebSocketClient } from '../../web/WebSocketClient';
-import { HeadType } from '../../types/HeadType';
-import { TailType } from '../../types/TailType';
-import { Color } from '../../types/Color';
 import { BTData } from '../../types/BTData';
 
 export abstract class BaseSnake {

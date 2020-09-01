@@ -48,9 +48,9 @@ export class Pather {
             } else if (point[0] == this.data.you.body[0].x + 1 && point[1] == this.data.you.body[0].y) {
                 return MoveDirection.RIGHT;
             } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y - 1) {
-                return MoveDirection.DOWN;
-            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y + 1) {
                 return MoveDirection.UP;
+            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y + 1) {
+                return MoveDirection.DOWN;
             }
             break;
         }

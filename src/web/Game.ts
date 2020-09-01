@@ -1,12 +1,15 @@
 import { BTData } from '../types/BTData';
+import { ISnake } from '../server/snakes/snake-interface';
 
 export class Game {
     public turns: BTData[] = [];
+    public finished?: Date;
+    public winner?: ISnake;
 
     constructor(
+        public index: number,
         public id: string,
     ) {
-
     }
 
     public setTurn(data: BTData) {

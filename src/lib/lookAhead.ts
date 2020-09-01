@@ -128,11 +128,11 @@ function moveSnakeInDirection(data: BTData, snake: BTSnake, direction: MoveDirec
     }
     switch (direction) {
         case MoveDirection.UP:
-            snake.body[0].y -= 1;
+            snake.body[0].y += 1;
             break;
 
         case MoveDirection.DOWN:
-            snake.body[0].y += 1;
+            snake.body[0].y -= 1;
             break;
 
         case MoveDirection.LEFT:

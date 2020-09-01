@@ -1,6 +1,5 @@
 import { BTData } from '../../types/BTData';
 import { Server, ServerMoveResponse } from '../Server';
-import { WebSocketClient } from '../../web/WebSocketClient';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';

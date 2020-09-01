@@ -12,15 +12,14 @@ import { log, logs } from '../lib/log';
 import { writeFile } from '../lib/writeFile';
 import { BTData, initBTData } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
-import { Color } from '../types/Color';
-import { HeadType } from '../types/HeadType';
-import { TailType } from '../types/TailType';
 import { HttpError } from './handlers';
 import { WebSocketServer } from './WebSocketServer';
 import { ISnake } from './snakes/snake-interface';
 
 export interface ServerMoveResponse {
     move: MoveDirection,
+    // Max 256 characters
+    shout?: string,
 }
 
 export interface Snake {
@@ -43,6 +42,8 @@ export class Server {
         private port: number,
         private snake: ISnake,
         private saveGame: boolean,
+        private apiVersion: number,
+        logHttp: boolean,
     ) {
         snake.server = this;
         this.webSocketServer = new WebSocketServer(this.port, snake);
@@ -52,8 +53,26 @@ export class Server {
 
         app.enable('verbose errors');
 
-        app.use(logger('dev'));
+        if (logHttp)  {
+            app.use(logger('dev'));
+        }
         app.use(bodyParser.json());
+
+        app.get('/', (request: Request, response: Response) => {
+            try {
+                log('ping', this.snake.constructor.name);
+                return response.json({
+                    apiversion: '1',
+                    author: 'petah',
+                    color: this.snake.color,
+                    head: this.snake.headType,
+                    tail: this.snake.tailType,
+                    name: this.snake.constructor.name,
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        });
 
         app.post('/start', (request: Request, response: Response) => {
             try {
@@ -74,7 +93,15 @@ export class Server {
                 });
 
                 logs.splice(0, logs.length);
-                return response.json(true);
+                if (this.apiVersion === 0) {
+                    return response.json({
+                        color: this.snake.color,
+                        headType: this.snake.headType,
+                        tailType: this.snake.tailType,
+                    });
+                } else if (this.apiVersion === 1) {
+                    return response.json();
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -85,9 +112,20 @@ export class Server {
                 log('move', this.snake.constructor.name);
                 const data: BTData = initBTData(request.body);
                 const moveResponse = this.snake.move(data);
-                log('moveResponse', moveResponse);
 
-                if (this.saveGame) {
+                if (this.apiVersion === 0) {
+                    log('moveResponse', moveResponse);
+                } else if (this.apiVersion === 1) {
+                    // Invert Y axis for api version 1
+                    if (moveResponse.move === MoveDirection.UP) {
+                        moveResponse.move = MoveDirection.DOWN;
+                    } else if (moveResponse.move === MoveDirection.DOWN) {
+                        moveResponse.move = MoveDirection.UP;
+                    }
+                    log('moveResponseV2', moveResponse);
+                }
+
+                if (this.saveGame && this.gameLog[request.body.you.id]) {
                     delete data.cache;
                     request.body.log = clone(logs);
                     this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
@@ -108,7 +146,7 @@ export class Server {
         app.post('/end', (request: Request, response: Response) => {
             try {
                 log('end', this.snake.constructor.name);
-                if (this.saveGame) {
+                if (this.saveGame && this.gameLog[request.body.you.id]) {
                     this.gameLog[request.body.you.id].end = request.body;
                     writeFile(request.body.you.id, this.gameLog[request.body.you.id]);
                     delete this.gameLog[request.body.you.id];
@@ -125,21 +163,16 @@ export class Server {
             }
         });
 
-        app.get('/', (request: Request, response: Response) => {
+        app.post('/ping', (request: Request, response: Response) => {
             try {
                 log('ping', this.snake.constructor.name);
-                return response.json({
-                    apiversion: '1',
-                    author: 'petah',
-                    color: this.snake.color,
-                    head: this.snake.headType,
-                    tail: this.snake.tailType,
-                });
+                return response.json();
             } catch (e) {
                 console.error(e);
             }
         });
 
+        // Catchall
         app.use('*', (req: Request, res: Response, next: (next?: any) => void) => {
             console.dir(req.baseUrl);
             // Root URL path

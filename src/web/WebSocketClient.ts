@@ -1,7 +1,6 @@
 import { ISnake } from '../server/snakes/snake-interface';
-import { BaseSnake } from '../server/snakes/base-snake';
-import { ClientSnake } from '../server/snakes/client-snake';
 import { GameManager } from './GameManager';
+import { AngularScope } from './angular-scope';
 
 export class WebSocketClient {
     private socket: WebSocket;
@@ -9,8 +8,10 @@ export class WebSocketClient {
     private debounce = null;
 
     constructor(
-        private snake: ISnake,
+        public snake: ISnake,
+        private snakes: ISnake[],
         private gameManager: GameManager,
+        private scope: AngularScope,
     ) {
         this.url = `ws://localhost:1${snake.port}/`;
         console.log('Connect web socket', this.url);
@@ -26,7 +27,7 @@ export class WebSocketClient {
         switch (message) {
             case 'snake':
                 data.wins = [];
-                // this.scope.snakes.push(data);
+                // this.snakes.push(data);
                 break;
         }
 
@@ -48,14 +49,15 @@ export class WebSocketClient {
                     break;
                 case 'end':
                     // game.end = body;
-                    // game.finished = new Date();
-                    // if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
-                    //     game.winner = this.scope.snakes.find(s => s.name == body.board.snakes[0].name);
-                    //     if (game.winner.wins.indexOf(game.id) === -1) {
-                    //         game.winner.wins.push(game.id);
-                    //     }
-                    // }
-                    // this.scope.$broadcast('end');
+                    game.finished = new Date();
+                    if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
+                        game.winner = this.snakes.find(s => s.name == body.board.snakes[0].name);
+                        game.winner.wins++;
+                        // if (game.winner.wins.indexOf(game.id) === -1) {
+                        //     game.winner.wins.push(game.id);
+                        // }
+                    }
+                    this.scope.$broadcast('end');
                     break;
             }
         }
