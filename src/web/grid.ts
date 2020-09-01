@@ -1,15 +1,8 @@
-import { weight, BLOCKED_THRESHOLD, floodFill } from '../lib/weight';
-import { closestFood } from '../lib/closestFood';
-import { BTData } from '../types/BTData';
-import { sortedFood } from '../lib/sortedFood';
-import { moveAway } from '../lib/moveAway';
-import { smartRandomMove } from '../lib/smartRandomMove';
-import { moveTowardsEnemy } from '../lib/moveTowardsEnemy';
-import { moveTowardsFoodPf } from '../lib/moveTowardsFoodPf';
+import { BTData, initBTData } from '../types/BTData';
+import snakes from "../server/snakes";
+import { invertColor } from '../lib/invertColor';
 
 export function loadGrid() {
-    const PF = require('pathfinding');
-
     // const colors = ['#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#34495e'];
     const grid = $('.grid');
 
@@ -17,15 +10,10 @@ export function loadGrid() {
         return grid.find('.row').eq(y).find('.col').eq(x);
     };
 
-    const BLOCKED = 1;
-    const FREE = 0;
-
-    const pf = new PF.AStarFinder({
-        allowDiagonal: false,
-        useCost: true,
-    });
-
     const drawBoard = (data: BTData) => {
+        data = initBTData(data);
+        const snake = snakes.find(s => s.name == data.you.name);
+        console.log(data, snake.move(data));
         $('.log').html('');
         if (data.log) {
             for (const log of data.log) {
@@ -34,22 +22,26 @@ export function loadGrid() {
         }
 
         grid.html('');
-        const matrix = [];
-        const costs = [];
         for (var y = 0; y < data.board.height; y++) {
-            matrix[y] = [];
-            costs[y] = [];
             const row = $('<div>').addClass('row').appendTo(grid);
             for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y, true);
-                matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
-                costs[y][x] = 100 - w;
                 const col = $('<div>').addClass('col').css({
-                    backgroundColor: `rgba(0, 0, 0, ${(100 - w) / 100})`,
+                    backgroundColor: data.grid[y][x].color,
                 }).appendTo(row);
-                $('<div>').addClass('weight').html(x + '/' + y + '<br/>w:' + w + '<br/>' + (matrix[y][x] == FREE ? 'FREE' : 'BLOCKED') + '<br/>c:' + costs[y][x]).css({
-                    color: w < 60 ? 'white' : 'black',
+                const cellData = [];
+                cellData.push(x + '/' + y);
+                for (const key in data.grid[y][x]) {
+                    if (key === 'color') {
+                        continue;
+                    }
+                    cellData.push(key + ': ' + data.grid[y][x][key]);
+                }
+                $('<div>').addClass('weight').html(cellData.join('<br/>')).css({
+                    color: invertColor(data.grid[y][x].color),
                 }).appendTo(col);
+                // $('<div>').addClass('weight').html(x + '/' + y + '<br/>w:' + w + '<br/>' + (matrix[y][x] == FREE ? 'FREE' : 'BLOCKED') + '<br/>c:' + costs[y][x]).css({
+                //     color: w < 60 ? 'white' : 'black',
+                // }).appendTo(col);
             }
         }
         for (const food of data.board.food) {
@@ -66,32 +58,7 @@ export function loadGrid() {
                 }).text(' ').appendTo(col);
             }
         }
-
-        console.log(moveTowardsFoodPf(data));
     };
-
-    // const hasWayOut = (data: BTData, path) => {
-    //     const matrix = [];
-    //     const costs = [];
-    //     for (var y = 0; y < data.board.height; y++) {
-    //         matrix[y] = [];
-    //         costs[y] = [];
-    //         for (var x = 0; x < data.board.width; x++) {
-    //             const w = weight(data, x, y);
-    //             matrix[y][x] = w > 0 ? FREE : BLOCKED;
-    //             costs[y][x] = 100 - w;
-    //         }
-    //     }
-    //     for (const [i, p] of path.entries()) {
-    //         matrix[p[1]][p[0]] = BLOCKED;
-    //     }
-
-    //     const pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
-    //     for (const food of data.board.food) {
-    //         const wayOutPath = pf.findPath(data.you.body[0].x, data.you.body[0].y, food.x, food.y, pfGrid.clone());
-    //         console.log(wayOutPath);
-    //     }
-    // }
 
     let game = null;
     const loadGame = (gameFile, turn = null) => {

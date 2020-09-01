@@ -1,13 +1,18 @@
+import { ISnake } from '../server/snakes/snake-interface';
+import { BaseSnake } from '../server/snakes/base-snake';
+import { ClientSnake } from '../server/snakes/client-snake';
+import { GameManager } from './GameManager';
+
 export class WebSocketClient {
     private socket: WebSocket;
     private url: string;
     private debounce = null;
 
     constructor(
-        private scope,
-        private port: number,
+        private snake: ISnake,
+        private gameManager: GameManager,
     ) {
-        this.url = `ws://localhost:1${port}/`;
+        this.url = `ws://localhost:1${snake.port}/`;
         console.log('Connect web socket', this.url);
 
         this.socket = new WebSocket(this.url);
@@ -21,47 +26,45 @@ export class WebSocketClient {
         switch (message) {
             case 'snake':
                 data.wins = [];
-                this.scope.snakes.push(data);
+                // this.scope.snakes.push(data);
                 break;
         }
 
         const body = data.body;
 
         if (body && body.game) {
-            const game = this.scope.games.find(g => !g.id || g.id === body.game.id);;
-            if (!game) {
-                console.log('Unknown game', game);
-                return;
-            }
+            const game = this.gameManager.getGame(body.game.id);
+
             switch (message) {
                 case 'start':
                     game.id = body.game.id;
-                    game.start = body;
-                    game.snakes.push(data.snake);
+                    // game.start = body;
+                    // game.snakes.push(data.snake);
                     break;
                 case 'move':
-                    game.moves++;
+                    game.setTurn(body);
+                    // game.moves++;
                     // game.moves.push(body);
                     break;
                 case 'end':
-                    game.end = body;
-                    game.finished = new Date();
-                    if (body.board.snakes[0]) {
-                        game.winner = this.scope.snakes.find(s => s.name == body.board.snakes[0].name);
-                        if (game.winner.wins.indexOf(game.id) === -1) {
-                            game.winner.wins.push(game.id);
-                        }
-                    }
-                    this.scope.$broadcast('end');
+                    // game.end = body;
+                    // game.finished = new Date();
+                    // if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
+                    //     game.winner = this.scope.snakes.find(s => s.name == body.board.snakes[0].name);
+                    //     if (game.winner.wins.indexOf(game.id) === -1) {
+                    //         game.winner.wins.push(game.id);
+                    //     }
+                    // }
+                    // this.scope.$broadcast('end');
                     break;
             }
         }
-        if (!this.debounce) {
-            this.debounce = setTimeout(() => {
-                this.debounce = null;
-                this.scope.$apply();
-            }, 100);
-        }
+        // if (!this.debounce) {
+        //     this.debounce = setTimeout(() => {
+        //         this.debounce = null;
+        //         this.scope.$apply();
+        //     }, 100);
+        // }
     }
 
     handleWebsocketClose() {

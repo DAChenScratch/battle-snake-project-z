@@ -12,6 +12,7 @@ export interface BTData {
     you: BTSnake,
     log: any[],
     cache: any,
+    grid: any[]
 }
 
 export interface BTXY {
@@ -24,4 +25,18 @@ export interface BTSnake {
     name: string,
     health: number,
     body: BTXY[],
+}
+
+export function initBTData(data: BTData): BTData {
+    data.cache = {};
+    data.grid = [];
+    for (let y = 0; y < data.board.height; y++) {
+        data.grid[y] = [];
+        for (let x = 0; x < data.board.width; x++) {
+            data.grid[y][x] = {
+                color: 'rgba(0, 0, 0, 1)',
+            };
+        }
+    }
+    return data;
 }

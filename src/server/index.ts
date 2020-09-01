@@ -3,9 +3,9 @@ import { Logger } from "../lib/log";
 import { Writer } from "../lib/writeFile";
 import snakes from "./snakes";
 
-Logger.enabled = true;
-Writer.enabled = true;
+Logger.enabled = false;
+Writer.enabled = false;
 
-for (const port in snakes) {
-    new Server(parseInt(port), new snakes[port](), false);
+for (const snake of snakes) {
+    new Server(snake.port, snake, true);
 }

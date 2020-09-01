@@ -7,15 +7,14 @@ import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
-export class ProjectZ extends BaseSnake {
-    start(data: BTData) {
-        return {
-            color: Color.PINK,
-            headType: HeadType.BELUGA,
-            tailType: TailType.BLOCK_BUM,
-        };
-    }
+export class ProjectZ extends BaseSnake implements ISnake {
+    public port: number = 9001;
+
+    public color = Color.PINK;
+    public headType = HeadType.BELUGA;
+    public tailType = TailType.BLOCK_BUM;
 
     move(data: BTData) {
         let direction;

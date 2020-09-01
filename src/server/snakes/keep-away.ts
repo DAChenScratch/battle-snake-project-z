@@ -8,15 +8,15 @@ import { randomMove } from '../../lib/randomMove';
 import { moveAway } from '../../lib/moveAway';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
-export class KeepAway extends BaseSnake {
-    start(data: BTData) {
-        return {
-            color: Color.YELLOW,
-            headType: HeadType.DEAD,
-            tailType: TailType.CURLED,
-        };
-    }
+export class KeepAway extends BaseSnake implements ISnake {
+    public port: number = 9002;
+
+    public color = Color.YELLOW;
+    public headType = HeadType.DEAD;
+    public tailType = TailType.CURLED;
+
     move(data: BTData) {
         let direction;
         if (data.you.health < 10) {

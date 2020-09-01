@@ -90,15 +90,15 @@ const isNearTail = (data: BTData, x: number, y: number) => {
 };
 
 export function weight(data: BTData, x: number, y: number, blockHeads = true) {
-    const c = cache(data, 'weight', {});
-    const key = x + ':' + y + ':' + (blockHeads ? 1 : 0);
-    if (c[key] === undefined) {
-        c[key] = weightCache(data, x, y, blockHeads);
+    if (data.grid[y][x].weight === undefined) {
+        data.grid[y][x].weight = computeWeight(data, x, y, blockHeads);
+        let color = (data.grid[y][x].weight) / 100 * 255;
+        data.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
     }
-    return c[key];
+    return data.grid[y][x].weight;
 }
 
-export function weightCache(data: BTData, x: number, y: number, blockHeads = true) {
+function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
     let result = 100;
     for (const snake of data.board.snakes) {
         const body = snake.body;

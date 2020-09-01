@@ -1,33 +1,40 @@
 import { WebSocketClient } from "./WebSocketClient";
 import snakes from "../server/snakes";
-
-console.log('Init angular app');
+import { ISnake } from '../server/snakes/snake-interface';
+import { ClientSnake } from '../server/snakes/client-snake';
+import { GameManager } from './GameManager';
 
 const app = angular.module('battleSnake', []);
 
+interface RootControllerScope {
+    gameManager: GameManager,
+    clientSnakes: ClientSnake[],
+    autoStart: boolean,
+    start: () => void,
+    stop: () => void,
+    $on: (event: string, callback: () => void) => void,
+    $apply: () => void,
+    watch: (gameId: string) => void,
+    updateAutoStart: () => void,
+    percentWins: (wins: number) => void,
+}
+
 app.controller('RootController', [
     '$scope',
-    function ($scope) {
-        $scope.snakes = [];
-        $scope.games = [];
+    function ($scope: RootControllerScope) {
+        $scope.gameManager = new GameManager();
+        $scope.clientSnakes = snakes.map(s => {
+            return new ClientSnake(s, $scope.gameManager);
+        });
         $scope.autoStart = localStorage.getItem('autoStart') == 'on';
 
         let started = null;
-        const clients = [];
-        const snakeConfig = [];
-        for (const port in snakes) {
-            const client = new WebSocketClient($scope, parseInt(port));
-            clients.push(client);
-            snakeConfig.push({
-                name: snakes[port].name,
-                url: `http://localhost:${port}/`,
-            })
-        }
 
         const width = 10;
         const height = 10;
         const food = 10;
         const MaxTurnsToNextFoodSpawn = 10;
+
         $scope.start = () => {
             started = true;
 
@@ -36,8 +43,9 @@ app.controller('RootController', [
                 height,
                 food,
                 MaxTurnsToNextFoodSpawn,
-                snakes: snakeConfig,
+                snakes: $scope.clientSnakes.filter(s => s.snake.enabled).map(s => s.snake.config),
             };
+            console.log(config);
             const game = {
                 id: null,
                 config,
@@ -48,7 +56,6 @@ app.controller('RootController', [
                 end: null,
                 snakes: [],
             };
-            $scope.games.push(game);
             fetch('http://localhost:3005/games', {
                 method: 'POST',
                 body: JSON.stringify(config)
@@ -60,21 +67,22 @@ app.controller('RootController', [
                 }))
                 .catch(e => console.error(e));
         };
+
         $scope.start();
 
-        $scope.$on('end', (event, args) => {
-            if (!started) {
-                return;
-            }
-            for (const game of $scope.games) {
-                if (!game.finished) {
-                    return;
-                }
-            }
-            if ($scope.autoStart) {
-                $scope.start();
-            }
-        });
+        // $scope.$on('end', () => {
+        //     if (!started) {
+        //         return;
+        //     }
+        //     for (const game of $scope.games) {
+        //         if (!game.finished) {
+        //             return;
+        //         }
+        //     }
+        //     if ($scope.autoStart) {
+        //         $scope.start();
+        //     }
+        // });
 
         $scope.stop = () => {
             started = false;
@@ -89,8 +97,19 @@ app.controller('RootController', [
         };
 
         $scope.percentWins = (wins) => {
-            return (100 / $scope.games.length * wins).toFixed(1);
+            let sum = 0;
+            for (const clientSnake of $scope.clientSnakes) {
+                sum += clientSnake.snake.wins;
+            }
+            if (sum === 0) {
+                return 0;
+            }
+            return (100 / sum * wins).toFixed(1);
         };
+
+        setInterval(() => {
+            $scope.$apply();
+        }, 100);
     },
 ]);
 

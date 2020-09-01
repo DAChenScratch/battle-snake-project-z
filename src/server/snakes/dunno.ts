@@ -9,24 +9,23 @@ import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
 import { moveTowardsKill } from '../../lib/moveTowardsKill';
+import { lookAhead } from '../../lib/lookAhead';
+import { ISnake } from './snake-interface';
 
-export class Dunno extends BaseSnake {
-    start(data: BTData) {
-        return {
-            color: Color.NEPHRITIS,
-            headType: HeadType.SAND_WORM,
-            tailType: TailType.ROUND_BUM,
-        };
-    }
+export class Dunno extends BaseSnake implements ISnake {
+    public port: number = 9007;
+    public color = Color.NEPHRITIS;
+    public headType = HeadType.SAND_WORM;
+    public tailType = TailType.ROUND_BUM;
 
     move(data: BTData) {
         let direction;
         direction = moveTowardsFoodPf(data);
         if (!direction) {
-            direction = moveTowardsKill(data);
+            direction = moveAway(data);
         }
         if (!direction) {
-            direction = moveAway(data);
+            direction = lookAhead(data);
         }
         if (!direction) {
             direction = smartRandomMove(data);

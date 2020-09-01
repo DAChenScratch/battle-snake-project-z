@@ -9,15 +9,15 @@ import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
-export class TailChase extends BaseSnake {
-    start(data: BTData) {
-        return {
-            color: Color.GREEN,
-            headType: HeadType.PIXEL,
-            tailType: TailType.HOOK,
-        };
-    }
+export class TailChase extends BaseSnake implements ISnake {
+    public port: number = 9005;
+
+    public color = Color.GREEN;
+    public headType = HeadType.PIXEL;
+    public tailType = TailType.HOOK;
+
     move(data: BTData) {
         let direction;
         if (data.you.health < 20) {

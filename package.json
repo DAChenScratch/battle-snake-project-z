@@ -44,7 +44,7 @@
     "scripts": {
         "nodemon": "nodemon --delay 500ms --watch dist dist/server/index.js",
         "server": "forever start dist/server/index.js",
-        "dev": "concurrently --names \"NODEMON,GULP,ENGINE\" \"npm run nodemon\" \"gulp watch\" \"php engine.php\""
+        "start": "concurrently --names \"NODEMON,GULP,ENGINE\" \"npm run nodemon\" \"gulp watch\" \"php engine.php\""
     },
     "nodemonConfig": {
         "ignore": [

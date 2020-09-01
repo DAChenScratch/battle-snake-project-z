@@ -13,4 +13,5 @@ npm-debug.log
 debug/bundle.js
 debug/bundle.js.map
 dist/**/*.js
+dist/**/*.js.map
 engine

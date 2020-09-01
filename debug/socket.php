@@ -2,8 +2,6 @@
 
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
-    </style>
 </head>
 
 <body ng-cloak>
@@ -14,11 +12,13 @@
                 <button ng-click="stop()" class="btn btn-primary">Stop</button>
                 <input type="checkbox" ng-model="autoStart" ng-change="updateAutoStart()" /> Auto Start
                 <div class="border p-2">
-                    <div ng-repeat="snake in snakes | orderBy: '-wins.length'">
-                        {{ snake.name }} <small>port:</small> {{ snake.port }} <small>wins:</small> {{ snake.wins.length }} {{ percentWins(snake.wins.length) }}%
+                    <div ng-repeat="clientSnake in clientSnakes | orderBy: '-snake.wins.length'">
+                        <input type="checkbox" ng-model="clientSnake.snake.enabled" />
+                        {{ clientSnake.snake.name }} <small>port:</small> {{ clientSnake.snake.port }} <small>wins:</small> {{ clientSnake.snake.wins }} {{ percentWins(clientSnake.snake.wins) }}%
                     </div>
                 </div>
-                <div ng-repeat="game in games | orderBy: '-moves'">
+                Sort by: <button>Wins</button> <button>Recent</button>
+                <div ng-repeat="(id, game) in gameManager.games">
                     <div class="border p-2">
                         <a ng-click="watch(game.id)" href="#">Watch</a>
                         <small>game:</small> {{ $index + 1 }}

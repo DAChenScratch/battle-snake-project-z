@@ -1,3 +1,5 @@
+const util = require('util');
+
 export const Logger = {
     enabled: false,
     console: false,
@@ -9,6 +11,7 @@ export function log(...args: any[]) {
     if (!Logger.enabled) {
         return;
     }
+
     let line = '';
     for (const arg of args) {
         if (typeof arg === 'string') {
@@ -20,7 +23,10 @@ export function log(...args: any[]) {
         } else if (!isNaN(arg)) {
             line += arg.toString();
         } else {
-            line += JSON.stringify(arg, null, 4);
+            line += util.inspect(arg, {
+                showHidden: false,
+                depth: null,
+            });
         }
         line += ' ';
     }

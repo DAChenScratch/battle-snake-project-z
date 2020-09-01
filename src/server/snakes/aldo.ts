@@ -5,10 +5,12 @@ import { Rando } from './rando';
 import { Tak } from './tak';
 import { TailChase } from './tail-chase';
 import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
 const CRC32 = require('crc-32');
 
-export class Aldo extends BaseSnake {
+export class Aldo extends BaseSnake implements ISnake {
+    public port: number = 9006;
     private options: any[];
 
     constructor() {
@@ -17,7 +19,7 @@ export class Aldo extends BaseSnake {
     }
 
     start(data: BTData) {
-        return this.snake(data).start(data);
+        this.snake(data).start(data);
     }
 
     move(data: BTData) {

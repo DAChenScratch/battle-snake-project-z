@@ -7,15 +7,15 @@ import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
-export class Tak extends BaseSnake {
-    start(data: BTData) {
-        return {
-            color: Color.RED,
-            headType: HeadType.FANG,
-            tailType: TailType.FRECKLED,
-        };
-    }
+export class Tak extends BaseSnake implements ISnake {
+    public port: number = 9004;
+
+    public color = Color.RED;
+    public headType = HeadType.FANG;
+    public tailType = TailType.FRECKLED;
+
     move(data: BTData) {
         let direction;
         let biggestSnake = 0;

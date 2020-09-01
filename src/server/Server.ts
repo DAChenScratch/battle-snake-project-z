@@ -10,19 +10,14 @@ import { Request, Response } from 'express';
 
 import { log, logs } from '../lib/log';
 import { writeFile } from '../lib/writeFile';
-import { BTData } from '../types/BTData';
+import { BTData, initBTData } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { Color } from '../types/Color';
 import { HeadType } from '../types/HeadType';
 import { TailType } from '../types/TailType';
 import { HttpError } from './handlers';
 import { WebSocketServer } from './WebSocketServer';
-
-export interface ServerStartResponse {
-    color: Color,
-    headType: HeadType,
-    tailType: TailType,
-}
+import { ISnake } from './snakes/snake-interface';
 
 export interface ServerMoveResponse {
     move: MoveDirection,
@@ -31,7 +26,7 @@ export interface ServerMoveResponse {
 export interface Snake {
     server: Server,
     info: any,
-    start: (data: BTData) => ServerStartResponse,
+    start: (data: BTData) => void,
     move: (data: BTData) => ServerMoveResponse,
 }
 
@@ -46,7 +41,7 @@ export class Server {
 
     constructor(
         private port: number,
-        private snake: Snake,
+        private snake: ISnake,
         private saveGame: boolean,
     ) {
         snake.server = this;
@@ -63,8 +58,7 @@ export class Server {
         app.post('/start', (request: Request, response: Response) => {
             try {
                 log('start', this.snake.constructor.name);
-                const startResponse = this.snake.start(request.body);
-                log('startResponse', startResponse);
+                this.snake.start(request.body);
 
                 if (this.saveGame) {
                     request.body.log = clone(logs);
@@ -80,7 +74,7 @@ export class Server {
                 });
 
                 logs.splice(0, logs.length);
-                return response.json(startResponse);
+                return response.json(true);
             } catch (e) {
                 console.error(e);
             }
@@ -89,8 +83,7 @@ export class Server {
         app.post('/move', (request: Request, response: Response) => {
             try {
                 log('move', this.snake.constructor.name);
-                const data: BTData = request.body;
-                data.cache = {};
+                const data: BTData = initBTData(request.body);
                 const moveResponse = this.snake.move(data);
                 log('moveResponse', moveResponse);
 
@@ -132,10 +125,16 @@ export class Server {
             }
         });
 
-        app.post('/ping', (request: Request, response: Response) => {
+        app.get('/', (request: Request, response: Response) => {
             try {
                 log('ping', this.snake.constructor.name);
-                return response.json({});
+                return response.json({
+                    apiversion: '1',
+                    author: 'petah',
+                    color: this.snake.color,
+                    head: this.snake.headType,
+                    tail: this.snake.tailType,
+                });
             } catch (e) {
                 console.error(e);
             }

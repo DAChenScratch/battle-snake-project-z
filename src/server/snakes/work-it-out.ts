@@ -10,14 +10,18 @@ import { moveAway } from '../../lib/moveAway';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { Server } from '../Server';
 import { WebSocketServer } from '../WebSocketServer';
+import { BaseSnake } from './base-snake';
+import { ISnake } from './snake-interface';
 
-export class WorkItOut {
+export class WorkItOut extends BaseSnake implements ISnake {
+    public port: number = 9008;
+
+    public color = Color.BROWN;
+    public headType = HeadType.SAND_WORM;
+    public tailType = TailType.SHARP;
+
     private opsCount: number;
     public ops: any[];
-    public info: any;
-
-    constructor() {
-    }
 
     start(data: BTData) {
         const options = [
@@ -38,11 +42,6 @@ export class WorkItOut {
         this.info = {
             name: this.constructor.name,
             ops: this.ops.map(op => op.name),
-        };
-        return {
-            color: Color.BROWN,
-            headType: HeadType.SAND_WORM,
-            tailType: TailType.SHARP,
         };
     }
 
