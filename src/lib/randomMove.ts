@@ -12,12 +12,12 @@ export function randomMove(data: BTData) {
         switch (direction) {
             case MoveDirection.UP:
                 x = data.you.body[0].x;
-                y = data.you.body[0].y - 1;
+                y = data.you.body[0].y + 1;
                 break;
 
             case MoveDirection.DOWN:
                 x = data.you.body[0].x;
-                y = data.you.body[0].y + 1;
+                y = data.you.body[0].y - 1;
                 break;
 
             case MoveDirection.LEFT:

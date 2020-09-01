@@ -39,18 +39,18 @@ export class Pather {
 
     pathToDirection(path) {
         for (let i = 0; i < path.length; i++) {
-            const p = path[i];
+            const point = path[i];
             if (i === 0) {
                 continue;
             }
-            if (p[0] == this.data.you.body[0].x - 1 && p[1] == this.data.you.body[0].y) {
+            if (point[0] == this.data.you.body[0].x - 1 && point[1] == this.data.you.body[0].y) {
                 return MoveDirection.LEFT;
-            } else if (p[0] == this.data.you.body[0].x + 1 && p[1] == this.data.you.body[0].y) {
+            } else if (point[0] == this.data.you.body[0].x + 1 && point[1] == this.data.you.body[0].y) {
                 return MoveDirection.RIGHT;
-            } else if (p[0] == this.data.you.body[0].x && p[1] == this.data.you.body[0].y - 1) {
-                return MoveDirection.UP;
-            } else if (p[0] == this.data.you.body[0].x && p[1] == this.data.you.body[0].y + 1) {
+            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y - 1) {
                 return MoveDirection.DOWN;
+            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y + 1) {
+                return MoveDirection.UP;
             }
             break;
         }
