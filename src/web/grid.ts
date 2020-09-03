@@ -1,6 +1,7 @@
 import { BTData, initBTData } from '../types/BTData';
 import snakes from "../server/snakes";
 import { invertColor } from '../lib/invertColor';
+import * as Color from 'color';
 
 export interface MoveData {
     body: BTData,
@@ -37,6 +38,7 @@ export function loadGrid(moveJson) {
                 const gridCell = moveJson.body.grid ? moveJson.body.grid[y][x] : {};
                 const col = $('<div>').addClass('col').css({
                     backgroundColor: gridCell.color || '#000000',
+                    borderColor: new Color(gridCell.color || '#000000').darken(0.2).hex(),
                 }).appendTo(row);
                 const cellData = [];
                 cellData.push(x + '/' + y);
@@ -56,11 +58,17 @@ export function loadGrid(moveJson) {
             $('<div>').addClass('food').appendTo(col);
         }
         for (const snake of moveJson.body.board.snakes) {
-            const color = snake.id == moveJson.body.you.id ? '#2ecc71' : '#e74c3c';
+            let color = '#e74c3c';
+            if (snake.id == moveJson.body.you.id) {
+                color = '#2ecc71';
+            } else if (moveJson.body.you.squad && moveJson.body.you.squad == snake.squad) {
+                color = '#3c69e7';
+            }
             for (const [p, part] of snake.body.entries()) {
                 const col = getCol(part.x, part.y);
                 $('<div>').addClass('snake').css({
                     backgroundColor: color,
+                    borderColor: new Color(color).darken(0.2).hex(),
                     borderRadius: p == 0 ? 100 : 0,
                 }).text(' ').appendTo(col);
             }

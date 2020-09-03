@@ -16,4 +16,5 @@ dist/**/*.js
 dist/**/*.js.map
 engine
 engine2
+games/**/*.json.gz
 /env.json

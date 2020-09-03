@@ -2,6 +2,7 @@ import { gridDistance } from './gridDistance';
 import { BTData } from '../types/BTData';
 import { isFree } from './isFree';
 import { cache } from './cache';
+import { isEnemy, isSquad } from './isEnemy';
 
 export const BLOCKED_THRESHOLD = 10;
 
@@ -100,7 +101,7 @@ const isNearTail = (data: BTData, x: number, y: number) => {
 export function weight(data: BTData, x: number, y: number, blockHeads = true) {
     if (data.grid[y][x].weight === undefined) {
         data.grid[y][x].weight = computeWeight(data, x, y, blockHeads);
-        let color = (data.grid[y][x].weight) / 100 * 255;
+        let color = Math.round((data.grid[y][x].weight) / 100 * 255);
         data.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
     }
     return data.grid[y][x].weight;
@@ -118,6 +119,10 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
                 if (p != body.length - 1) {
                     // Is head of snake, and head blocking?
                     if (p === 0 && !blockHeads) {
+                        continue;
+                    }
+                    // Check squad mode
+                    if (isSquad(data.you, snake)) {
                         continue;
                     }
                     return 0;
@@ -180,7 +185,7 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
         }
     }
 
-
+    // Borders
     if (x == 0) {
         result = Math.min(result, 35);
     }
