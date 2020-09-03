@@ -4,7 +4,7 @@ import { Pather } from './Pather';
 
 // @todo don't move if near bigger snake
 export function moveTowardsTail(data: BTData) {
-    const pather = new Pather(data, false);
+    const pather = new Pather(data, true);
     const path = pather.pathTo(data.you.body[data.you.body.length - 1].x, data.you.body[data.you.body.length - 1].y);
     if (path.length) {
         const direction = pather.pathToDirection(path);
@@ -13,5 +13,5 @@ export function moveTowardsTail(data: BTData) {
             return direction;
         }
     }
-    log('moveTowardsEnemy', 'no options');
+    log('moveTowardsTail', 'no options');
 }
