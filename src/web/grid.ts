@@ -15,6 +15,8 @@ export function loadGrid(moveJson) {
     };
 
     const drawBoard = (moveJson: MoveData) => {
+        console.log('Loading move JSON', moveJson);
+
         const data = initBTData(moveJson.body);
 
         const snake = snakes.find(s => s.name == data.you.name);

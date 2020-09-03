@@ -71,7 +71,7 @@ $files = array_slice($files, 0, 50);
 
 <head>
     <!-- @todo use a cache buster -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?cache=<?= md5_file(__DIR__ . '/styles.css'); ?>" />
 </head>
 
 <body>
