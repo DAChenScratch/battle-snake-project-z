@@ -15,6 +15,11 @@ function readRankings($file)
                 'label' => $player,
                 'fill' => false,
                 'data' => [],
+                'type' => 'line',
+                'pointRadius' => 0,
+                'fill' => false,
+                // 'lineTension' => 0,
+                'borderWidth' => 2,
             ];
         }
     }
@@ -45,7 +50,7 @@ function readRankings($file)
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <div class="container-fluid">
         <div class="row">
-            <?php foreach (glob(__DIR__ . '/../scrapes/*.json') as $file): ?>
+            <?php foreach (glob(__DIR__ . '/../scrapes/*.json') as $file) : ?>
                 <?php list($labels, $datasets, $label) = readRankings($file); ?>
                 <div class="col-lg-4">
                     <canvas id="<?= $label; ?>" width="400" height="400"></canvas>
@@ -77,6 +82,9 @@ function readRankings($file)
                                 title: {
                                     display: true,
                                     text: <?= json_encode($label); ?>,
+                                },
+                                animation: {
+                                    duration: 0
                                 },
                                 tooltips: {
                                     mode: 'index',
