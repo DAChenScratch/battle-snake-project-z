@@ -10,6 +10,7 @@ import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
+import { closestEnemyHead } from '../../lib/closestEnemyHead';
 
 export class TailChase extends BaseSnake implements ISnake {
     public port: number = 9005;
@@ -22,6 +23,12 @@ export class TailChase extends BaseSnake implements ISnake {
         let direction;
         if (data.you.health < data.board.width || data.you.health < data.board.height) {
             direction = moveTowardsFoodPf(data);
+        }
+
+        const closest = closestEnemyHead(data);
+        console.log(closest);
+        if (closest && closest.path.length <= 3) {
+            direction = moveAway(data);
         }
         if (!direction) {
             direction = moveTowardsTail(data);

@@ -1,6 +1,7 @@
 import { weight, BLOCKED_THRESHOLD } from './weight';
-import { BTData } from '../types/BTData';
+import { BTData, BTXY } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
+import { number } from 'mathjs';
 
 const PF = require('pathfinding');
 
@@ -11,6 +12,10 @@ const pf = new PF.AStarFinder({
 
 const BLOCKED = 1;
 const FREE = 0;
+
+export interface Path extends Array<[number, number]> {
+
+}
 
 export class Pather {
     private pfGrid;
@@ -33,7 +38,7 @@ export class Pather {
         this.pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
     }
 
-    pathTo(x: number, y: number) {
+    pathTo(x: number, y: number): Path {
         return pf.findPath(this.data.you.body[0].x, this.data.you.body[0].y, x, y, this.pfGrid.clone());
     }
 
