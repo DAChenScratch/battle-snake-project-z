@@ -27,7 +27,7 @@ export class TailChase extends BaseSnake implements ISnake {
 
         const closest = closestEnemyHead(data);
         console.log(closest);
-        if (closest && closest.path.length <= 3) {
+        if (closest && closest.path.length <= 4) {
             direction = moveAway(data);
         }
         if (!direction) {
