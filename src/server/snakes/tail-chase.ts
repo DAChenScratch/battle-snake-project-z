@@ -20,12 +20,9 @@ export class TailChase extends BaseSnake implements ISnake {
 
     move(data: BTData) {
         let direction;
-        if (data.you.health < 5) {
+        if (data.you.health < data.board.width || data.you.health < data.board.height) {
             direction = moveTowardsFoodPf(data);
         }
-        // if (!direction) {
-        //     direction = moveAway(data, 5);
-        // }
         if (!direction) {
             direction = moveTowardsTail(data);
         }
