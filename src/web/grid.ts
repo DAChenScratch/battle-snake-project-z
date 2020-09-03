@@ -16,12 +16,13 @@ export function loadGrid(moveJson) {
 
     const drawBoard = (moveJson: MoveData) => {
         console.log('Loading move JSON', moveJson);
+        $('.data').html(JSON.stringify(moveJson, null, 4));
 
         const data = initBTData(moveJson.body);
 
         const snake = snakes.find(s => s.name == data.you.name);
         if (snake) {
-            console.log(data, snake.move(data));
+            console.log('Next move', snake.move(data));
         }
 
         $('.log').html('');

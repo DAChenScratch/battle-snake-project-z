@@ -113,14 +113,14 @@ $files = array_slice($files, 0, 50);
             <div class="log"></div>
         </pre>
         <pre class="scroll">
-            <div class="data"><?= json_encode($moveJson, JSON_PRETTY_PRINT); ?></div>
+            <div class="data"></div>
         </pre>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.js"></script>
     <script src="bundle.js?cache=<?= md5_file(__DIR__ . '/bundle.js'); ?>"></script>
     <script>
-        loadGrid(<?= json_encode($moveJson, JSON_PRETTY_PRINT); ?>);
+        loadGrid(<?= json_encode($moveJson); ?>);
     </script>
 </body>
 
