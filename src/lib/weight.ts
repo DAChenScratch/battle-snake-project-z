@@ -130,9 +130,9 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
     //     return 100;
     // }
 
-    if (isNearTail(data, x, y)) {
-        return 75;
-    }
+    // if (isNearTail(data, x, y)) {
+    //     return 75;
+    // }
 
     if (isDeadEnd(data, x, y) && !isNearTail(data, x, y)) {
         return 0;
