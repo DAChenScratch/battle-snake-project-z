@@ -18,11 +18,9 @@ export function loadGrid(moveJson) {
         console.log('Loading move JSON', moveJson);
         $('.data').html(JSON.stringify(moveJson, null, 4));
 
-        const data = initBTData(moveJson.body);
-
-        const snake = snakes.find(s => s.name == data.you.name);
+        const snake = snakes.find(s => s.name == moveJson.body.you.name);
         if (snake) {
-            console.log('Next move', snake.move(data));
+            console.log('Next move', snake.move(moveJson.body));
         }
 
         $('.log').html('');
@@ -33,34 +31,34 @@ export function loadGrid(moveJson) {
         }
 
         grid.html('');
-        for (var y = 0; y < data.board.height; y++) {
+        for (var y = 0; y < moveJson.body.board.height; y++) {
             const row = $('<div>').addClass('row').appendTo(grid);
-            for (var x = 0; x < data.board.width; x++) {
+            for (var x = 0; x < moveJson.body.board.width; x++) {
                 const col = $('<div>').addClass('col').css({
-                    backgroundColor: data.grid[y][x].color,
+                    backgroundColor: moveJson.body.grid[y][x].color,
                 }).appendTo(row);
                 const cellData = [];
                 cellData.push(x + '/' + y);
-                for (const key in data.grid[y][x]) {
+                for (const key in moveJson.body.grid[y][x]) {
                     if (key === 'color') {
                         continue;
                     }
-                    cellData.push(key + ': ' + data.grid[y][x][key]);
+                    cellData.push(key + ': ' + moveJson.body.grid[y][x][key]);
                 }
                 $('<div>').addClass('weight').html(cellData.join('<br/>')).css({
-                    color: invertColor(data.grid[y][x].color),
+                    color: invertColor(moveJson.body.grid[y][x].color),
                 }).appendTo(col);
                 // $('<div>').addClass('weight').html(x + '/' + y + '<br/>w:' + w + '<br/>' + (matrix[y][x] == FREE ? 'FREE' : 'BLOCKED') + '<br/>c:' + costs[y][x]).css({
                 //     color: w < 60 ? 'white' : 'black',
                 // }).appendTo(col);
             }
         }
-        for (const food of data.board.food) {
+        for (const food of moveJson.body.board.food) {
             const col = getCol(food.x, food.y);
             $('<div>').addClass('food').appendTo(col);
         }
-        for (const snake of data.board.snakes) {
-            const color = snake.id == data.you.id ? '#2ecc71' : '#e74c3c';
+        for (const snake of moveJson.body.board.snakes) {
+            const color = snake.id == moveJson.body.you.id ? '#2ecc71' : '#e74c3c';
             for (const [p, part] of snake.body.entries()) {
                 const col = getCol(part.x, part.y);
                 $('<div>').addClass('snake').css({
