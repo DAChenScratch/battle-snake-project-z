@@ -1,7 +1,6 @@
 import { weight, BLOCKED_THRESHOLD } from './weight';
 import { BTData, BTXY } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
-import { number } from 'mathjs';
 
 const PF = require('pathfinding');
 
