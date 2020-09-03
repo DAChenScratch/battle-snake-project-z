@@ -4,7 +4,7 @@ import { closestEnemyHead } from './closestEnemyHead';
 
 export function moveTowardsEnemy(data: BTData) {
     const closest = closestEnemyHead(data);
-    if (closest.direction) {
+    if (closest && closest.direction) {
         log('moveTowardsEnemy', closest.direction);
         return closest.direction;
     }
