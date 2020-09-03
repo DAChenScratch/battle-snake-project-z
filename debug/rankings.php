@@ -45,8 +45,8 @@ function readRankings($file)
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <div class="container-fluid">
         <div class="row">
-            <?php foreach (glob(__DIR__ . '/../scrapes/*.json') as $file) : ?>
-                <?php [$labels, $datasets, $label] = readRankings($file); ?>
+            <?php foreach (glob(__DIR__ . '/../scrapes/*.json') as $file): ?>
+                <?php list($labels, $datasets, $label) = readRankings($file); ?>
                 <div class="col-lg-4">
                     <canvas id="<?= $label; ?>" width="400" height="400"></canvas>
                 </div>
