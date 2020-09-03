@@ -18,7 +18,10 @@ export function loadGrid(moveJson) {
         const data = initBTData(moveJson.body);
 
         const snake = snakes.find(s => s.name == data.you.name);
-        console.log(data, snake.move(data));
+        if (snake) {
+            console.log(data, snake.move(data));
+        }
+
         $('.log').html('');
         if (moveJson.logs) {
             for (const log of moveJson.logs) {
