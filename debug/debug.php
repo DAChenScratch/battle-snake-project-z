@@ -53,21 +53,8 @@ usort($files, function ($a, $b) {
     return $b['mtime'] <=> $a['mtime'];
 });
 $files = array_slice($files, 0, 50);
-// $files = array_map(function ($file) {
-//     var_dump($file);
-//     $content = file_get_contents($file['file']);
-//     // $content = file_get_contents($file['file']);
-//     // if (!$content) {
-//     //     throw new \Exception('Could not load file: ' . $file['file']);
-//     // }
-//     // $content = json_decode($content, true);
-//     // $file['content'] = [
-//     //     'snake' => $content['snake'],
-//     // ];
-//     return $file;
-// }, $files);
 ?>
-<html>
+<html ng-app="battleSnake" ng-controller="DebugController" ng-init="moveJson = <?= htmlentities(json_encode($moveJson)); ?>">
 
 <head>
     <!-- @todo use a cache buster -->
@@ -76,7 +63,12 @@ $files = array_slice($files, 0, 50);
 
 <body>
     <div class="wrapper">
-        <div class="grid">
+        <div>
+            <div class="grid">
+            </div>
+            <div>
+                <button type="button" ng-click="recomputeWeights()">Recompute weights</button>
+            </div>
         </div>
         <div class="scroll">
             <div class="games">
@@ -116,11 +108,11 @@ $files = array_slice($files, 0, 50);
             <div class="data"></div>
         </pre>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.js"></script>
     <script src="bundle.js?cache=<?= md5_file(__DIR__ . '/bundle.js'); ?>"></script>
     <script>
-        loadGrid(<?= json_encode($moveJson); ?>);
+        // loadGrid();
     </script>
 </body>
 

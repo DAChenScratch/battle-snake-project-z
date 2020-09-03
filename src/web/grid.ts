@@ -2,7 +2,7 @@ import { BTData, initBTData } from '../types/BTData';
 import snakes from "../server/snakes";
 import { invertColor } from '../lib/invertColor';
 
-interface MoveData {
+export interface MoveData {
     body: BTData,
     logs: string[],
 }
@@ -34,23 +34,21 @@ export function loadGrid(moveJson) {
         for (var y = 0; y < moveJson.body.board.height; y++) {
             const row = $('<div>').addClass('row').appendTo(grid);
             for (var x = 0; x < moveJson.body.board.width; x++) {
+                const gridCell = moveJson.body.grid ? moveJson.body.grid[y][x] : {};
                 const col = $('<div>').addClass('col').css({
-                    backgroundColor: moveJson.body.grid[y][x].color,
+                    backgroundColor: gridCell.color || '#000000',
                 }).appendTo(row);
                 const cellData = [];
                 cellData.push(x + '/' + y);
-                for (const key in moveJson.body.grid[y][x]) {
+                for (const key in gridCell) {
                     if (key === 'color') {
                         continue;
                     }
-                    cellData.push(key + ': ' + moveJson.body.grid[y][x][key]);
+                    cellData.push(key + ': ' + gridCell[key]);
                 }
                 $('<div>').addClass('weight').html(cellData.join('<br/>')).css({
-                    color: invertColor(moveJson.body.grid[y][x].color),
+                    color: invertColor(gridCell.color || '#000000'),
                 }).appendTo(col);
-                // $('<div>').addClass('weight').html(x + '/' + y + '<br/>w:' + w + '<br/>' + (matrix[y][x] == FREE ? 'FREE' : 'BLOCKED') + '<br/>c:' + costs[y][x]).css({
-                //     color: w < 60 ? 'white' : 'black',
-                // }).appendTo(col);
             }
         }
         for (const food of moveJson.body.board.food) {

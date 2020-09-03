@@ -8,48 +8,51 @@
     <div class="container-fluid">
         <div class="row">
             <div ng-class="{'col-md-5': watching, 'col-md-12': !watching}">
-                <div class="form-group">
-                    <label for="boardWidth">Board width</label>
-                    <input type="number" step="1" class="form-control" id="boardWidth" ng-model="options.boardWidth" />
-                </div>
-                <div class="form-group">
-                    <label for="boardHeight">Board height</label>
-                    <input type="number" step="1" class="form-control" id="boardHeight" ng-model="options.boardHeight" />
-                </div>
-                <div class="form-group">
-                    <label for="startingFood">Starting food</label>
-                    <input type="number" step="1" class="form-control" id="startingFood" ng-model="options.startingFood" />
-                </div>
-                <div class="form-group">
-                    <label for="foodSpawnTime">Max turns to food spawn</label>
-                    <input type="number" step="1" class="form-control" id="foodSpawnTime" ng-model="options.foodSpawnTime" />
-                </div>
-                <div class="form-group">
-                    <label for="concurrentGames">Concurrent Games</label>
-                    <input type="number" step="1" class="form-control" id="concurrentGames" ng-model="options.concurrentGames" />
-                </div>
-                <div class="form-group">
+                <div class="form-group mt-3">
+                    <button ng-click="options.showConfig = !options.showConfig" class="btn btn-primary btn-sm">Config</button>
                     <button ng-click="start()" class="btn btn-primary btn-sm">Start</button>
                     <button ng-click="stop()" class="btn btn-primary btn-sm">Stop</button>
                     <input type="checkbox" ng-model="options.autoStart" /> Auto Start
                 </div>
-
+                <div ng-show="options.showConfig">
+                    <div class="form-group">
+                        <label for="boardWidth">Board width</label>
+                        <input type="number" step="1" class="form-control" id="boardWidth" ng-model="options.boardWidth" />
+                    </div>
+                    <div class="form-group">
+                        <label for="boardHeight">Board height</label>
+                        <input type="number" step="1" class="form-control" id="boardHeight" ng-model="options.boardHeight" />
+                    </div>
+                    <div class="form-group">
+                        <label for="startingFood">Starting food</label>
+                        <input type="number" step="1" class="form-control" id="startingFood" ng-model="options.startingFood" />
+                    </div>
+                    <div class="form-group">
+                        <label for="foodSpawnTime">Max turns to food spawn</label>
+                        <input type="number" step="1" class="form-control" id="foodSpawnTime" ng-model="options.foodSpawnTime" />
+                    </div>
+                    <div class="form-group">
+                        <label for="concurrentGames">Concurrent Games</label>
+                        <input type="number" step="1" class="form-control" id="concurrentGames" ng-model="options.concurrentGames" />
+                    </div>
+                </div>
 
                 <table class="table table-striped table-sm border">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th ng-show="options.showConfig"></th>
                             <th>Name</th>
-                            <th>Port</th>
+                            <!-- <th>Port</th> -->
                             <th>Wins</th>
                             <th>Wins Percent</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="webSocketClient in webSocketClients | orderBy: '-snake.wins'">
-                            <td><input type="number" class="form-control form-control-sm" ng-model="options.enabledSnakes[webSocketClient.snake.name]" /></td>
+                            <td ng-show="options.showConfig"><input type=" number" class="form-control form-control-sm" ng-model="options.enabledSnakes[webSocketClient.snake.name]" />
+                            </td>
                             <td>{{ webSocketClient.snake.name }}</td>
-                            <td>{{ webSocketClient.snake.port }}</td>
+                            <!-- <td>{{ webSocketClient.snake.port }}</td> -->
                             <td>{{ webSocketClient.snake.wins }}</td>
                             <td>{{ percentWins(webSocketClient.snake.wins) }}%</td>
                         </tr>
