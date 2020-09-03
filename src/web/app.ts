@@ -3,6 +3,8 @@ import snakes from "../server/snakes";
 import { GameManager } from './GameManager';
 import { AngularScope } from './angular-scope';
 import { response } from 'express';
+import { Game } from './Game';
+import { log } from '../lib/log';
 
 const app = angular.module('battleSnake', []);
 
@@ -10,6 +12,7 @@ interface RootControllerScope extends AngularScope {
     gameManager: GameManager,
     webSocketClients: WebSocketClient[],
     options: Options,
+    watching: boolean,
 
     start: () => void,
     stop: () => void,
@@ -17,6 +20,7 @@ interface RootControllerScope extends AngularScope {
     updateAutoStart: () => void,
     percentWins: (wins: number) => void,
     getAverageMoves: () => number,
+    sortGames: (sort: string) => void,
 }
 
 interface Options {
@@ -27,14 +31,19 @@ interface Options {
     autoStart: boolean,
     enabledSnakes: EnabledSnake,
     orderGames: string,
+    concurrentGames: number,
 }
 
 interface EnabledSnake {
-    [id: string]: boolean;
+    [id: string]: number;
 }
 app.controller('RootController', [
     '$scope',
-    function ($scope: RootControllerScope) {
+    '$http',
+    function (
+        $scope: RootControllerScope,
+        $http,
+    ) {
         $scope.gameManager = new GameManager();
         $scope.webSocketClients = snakes.map(snake => {
             return new WebSocketClient(snake, snakes, $scope.gameManager, $scope);
@@ -44,67 +53,77 @@ app.controller('RootController', [
         } catch (error) {
             console.error('Error parsing local storage options', error, localStorage.getItem('options'));
         }
-        if (!$scope.options) {
-            $scope.options = {
-                boardWidth: 10,
-                boardHeight: 10,
-                startingFood: 10,
-                foodSpawnTime: 10,
-                autoStart: false,
-                enabledSnakes: {},
-                orderGames: '$index',
-            };
-        }
+        $scope.options = $.extend({
+            boardWidth: 10,
+            boardHeight: 10,
+            startingFood: 10,
+            foodSpawnTime: 10,
+            autoStart: false,
+            enabledSnakes: {},
+            orderGames: 'index',
+            concurrentGames: 1,
+        }, $scope.options || {});
 
-
-        let started = null;
+        let started = false;
+        let pendingGames = 0;
 
         $scope.start = () => {
-            started = true;
-
-            const config = {
-                width: $scope.options.boardWidth,
-                height: $scope.options.boardHeight,
-                food: $scope.options.startingFood,
-                MaxTurnsToNextFoodSpawn: $scope.options.foodSpawnTime,
-                snakes: $scope.webSocketClients
-                    .filter(webSocketClient => $scope.options.enabledSnakes[webSocketClient.snake.name])
-                    .map(webSocketClient => webSocketClient.snake.config),
-            };
-            const game = {
-                id: null,
-                config,
-                started: new Date(),
-                finished: null,
-                start: null,
-                moves: 0,
-                end: null,
-                snakes: [],
-            };
-            fetch('http://localhost:3005/games', {
-                method: 'POST',
-                body: JSON.stringify(config)
-            })
-                .then(response => response.json())
-                .then(json => game.id = json.ID)
-                .then(_ => fetch(`http://localhost:3005/games/${game.id}/start`, {
+            let gamesToStart = $scope.options.concurrentGames - $scope.gameManager.getRunningGames().length;
+            log.verbose('Starting games', gamesToStart);
+            while (gamesToStart > 0) {
+                gamesToStart--;
+                pendingGames++;
+                started = true;
+                const config = {
+                    width: $scope.options.boardWidth,
+                    height: $scope.options.boardHeight,
+                    food: $scope.options.startingFood,
+                    MaxTurnsToNextFoodSpawn: $scope.options.foodSpawnTime,
+                    snakes: [],
+                };
+                for (const snakeName in $scope.options.enabledSnakes) {
+                    const snakeCount = $scope.options.enabledSnakes[snakeName];
+                    for (let i = 0; i < snakeCount; i++) {
+                        const webSocketClient = $scope.webSocketClients.find(w => w.snake.name == snakeName);
+                        config.snakes.push(webSocketClient.snake.config);
+                    }
+                }
+                if (!config.snakes.length) {
+                    log('No enabled snakes');
+                    return;
+                }
+                log.verbose('Initializing game');
+                let game: Game;
+                $http({
+                    url: 'http://localhost:3005/games',
                     method: 'POST',
-                }))
-                .catch(e => console.error(e));
+                    data: config,
+                })
+                    .then((response) => {
+                        game = $scope.gameManager.initGame(response.data.ID);
+                        log.verbose('Starting game', game.id);
+                        return $http({
+                            url: `http://localhost:3005/games/${game.id}/start`,
+                            method: 'POST',
+                        });
+                    })
+                    .then(() => {
+                        log.verbose('Started game', game.id);
+                        game.started = new Date();
+                        game.pending = false;
+                        pendingGames--;
+                    })
+                    .catch((error) => console.error(error));
+            }
         };
 
         $scope.start();
 
         $scope.$on('end', () => {
-            if (!started) {
-                return;
-            }
-            for (const game of $scope.gameManager.games) {
-                if (!game.finished) {
-                    return;
-                }
-            }
-            if ($scope.options.autoStart) {
+            // @todo allow concurrent games
+            // @todo abandon stalled games
+            if (started && pendingGames < $scope.options.concurrentGames && $scope.options.autoStart) {
+                log.verbose('Auto starting game');
                 $scope.start();
             }
         });
@@ -114,6 +133,7 @@ app.controller('RootController', [
         };
 
         $scope.watch = (gameId) => {
+            $scope.watching = true;
             $('#board').attr('src', `http://localhost:3009?engine=http://localhost:3005&game=${gameId}`);
         };
 
@@ -136,9 +156,17 @@ app.controller('RootController', [
             return (100 / sum * wins).toFixed(1);
         };
 
+        $scope.sortGames = (sort: string) => {
+            if ($scope.options.orderGames == sort) {
+                $scope.options.orderGames = '-' + sort;
+            } else {
+                $scope.options.orderGames = sort;
+            }
+        };
+
         setInterval(() => {
             $scope.$apply();
-        }, 100);
+        }, 500);
     },
 ]);
 

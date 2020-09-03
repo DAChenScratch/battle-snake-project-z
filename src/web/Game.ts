@@ -3,6 +3,8 @@ import { ISnake } from '../server/snakes/snake-interface';
 
 export class Game {
     public turns: BTData[] = [];
+    public pending: boolean = false;
+    public started?: Date;
     public finished?: Date;
     public winner?: ISnake;
 
@@ -10,6 +12,7 @@ export class Game {
         public index: number,
         public id: string,
     ) {
+        this.pending = true;
     }
 
     public setTurn(data: BTData) {

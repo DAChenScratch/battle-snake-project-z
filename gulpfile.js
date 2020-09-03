@@ -26,12 +26,12 @@ gulp.task('web', () => {
         // .pipe(sourcemaps.init({ loadMaps: true }))
         // .pipe(uglify())
         .on('error', log.error)
-        // .pipe(sourcemaps.write('./'))
+        // .pipe(sourcemaps.write())
         .pipe(gulp.dest('./debug/'));
 });
 
 gulp.task('default', gulp.series('ts', 'web'));
 
 gulp.task('watch', gulp.series('ts', 'web', () => {
-    return gulp.watch(['src/**/*.ts', 'env.js'], gulp.series('default'));
+    return gulp.watch(['src/**/*.ts', 'env.json'], gulp.series('default'));
 }));

@@ -29,13 +29,7 @@ export interface Snake {
     move: (data: BTData) => ServerMoveResponse,
 }
 
-const clone = (data) => {
-    return JSON.parse(JSON.stringify(data));
-};
-
 export class Server {
-    private gameLog = {};
-
     public webSocketServer: WebSocketServer;
 
     constructor(
@@ -80,12 +74,10 @@ export class Server {
                 this.snake.start(request.body);
 
                 if (this.saveGame) {
-                    request.body.log = clone(logs);
-                    this.gameLog[request.body.you.id] = {
-                        snake: snake.constructor.name,
-                        start: request.body,
-                        moves: [],
-                    };
+                    writeFile(request.body.game.id, request.body.you.id, 'start', {
+                        body: request.body,
+                        logs,
+                    });
                 }
                 this.webSocketServer.broadcast('start', {
                     snake: snake.info,
@@ -125,10 +117,11 @@ export class Server {
                     log('moveResponseV2', moveResponse);
                 }
 
-                if (this.saveGame && this.gameLog[request.body.you.id]) {
-                    delete data.cache;
-                    request.body.log = clone(logs);
-                    this.gameLog[request.body.you.id].moves[request.body.turn] = request.body;
+                if (this.saveGame) {
+                    writeFile(request.body.game.id, request.body.you.id, 'move', {
+                        body: request.body,
+                        logs,
+                    });
                 }
 
                 this.webSocketServer.broadcast('move', {
@@ -146,10 +139,11 @@ export class Server {
         app.post('/end', (request: Request, response: Response) => {
             try {
                 log('end', this.snake.constructor.name);
-                if (this.saveGame && this.gameLog[request.body.you.id]) {
-                    this.gameLog[request.body.you.id].end = request.body;
-                    writeFile(request.body.you.id, this.gameLog[request.body.you.id]);
-                    delete this.gameLog[request.body.you.id];
+                if (this.saveGame) {
+                    writeFile(request.body.game.id, request.body.you.id, 'end', {
+                        body: request.body,
+                        logs,
+                    });
                 }
 
                 this.webSocketServer.broadcast('end', {

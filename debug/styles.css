@@ -11,6 +11,10 @@ body {
     display: flex;
 }
 
+pre {
+    margin: 0;
+}
+
 .wrapper {
     display: flex;
 }

@@ -8,6 +8,7 @@ import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
+import { isEnemy } from '../../lib/isEnemy';
 
 export class Tak extends BaseSnake implements ISnake {
     public port: number = 9004;
@@ -20,14 +21,14 @@ export class Tak extends BaseSnake implements ISnake {
         let direction;
         let biggestSnake = 0;
         for (const snake of data.board.snakes) {
-            if (snake.id == data.you.id) {
+            if (!isEnemy(data.you, snake)) {
                 continue;
             }
             if (snake.body.length > biggestSnake) {
                 biggestSnake = snake.body.length;
             }
         }
-        if (data.you.health < 20 || data.you.body.length < biggestSnake) {
+        if (data.you.health < 15 || data.you.body.length < biggestSnake) {
             direction = moveTowardsFoodPf(data);
         }
         if (!direction) {

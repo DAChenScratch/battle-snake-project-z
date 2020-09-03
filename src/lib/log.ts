@@ -3,6 +3,7 @@ const util = require('util');
 export const Logger = {
     enabled: false,
     console: false,
+    stdout: false,
 };
 
 export const logs = [];
@@ -33,7 +34,9 @@ export function log(...args: any[]) {
     logs.push(line);
     if (Logger.console) {
         console.log(line);
-    } else {
+    } else if (Logger.stdout) {
         process.stdout.write(line + '\n');
     }
 }
+
+log.verbose = (...args: any[]) => { };

@@ -1,6 +1,7 @@
 import { ISnake } from '../server/snakes/snake-interface';
 import { GameManager } from './GameManager';
 import { AngularScope } from './angular-scope';
+import { log } from '../lib/log';
 
 export class WebSocketClient {
     private socket: WebSocket;
@@ -34,30 +35,40 @@ export class WebSocketClient {
         const body = data.body;
 
         if (body && body.game) {
-            const game = this.gameManager.getGame(body.game.id);
-
+            let game;
             switch (message) {
                 case 'start':
-                    game.id = body.game.id;
+                    log.verbose('Received game started', body.game.id, this.gameManager);
+                    game = this.gameManager.getGame(body.game.id);
+                    if (!game) {
+                        game = this.gameManager.initGame(body.game.id);
+                    }
                     // game.start = body;
                     // game.snakes.push(data.snake);
                     break;
                 case 'move':
-                    game.setTurn(body);
-                    // game.moves++;
-                    // game.moves.push(body);
+                    game = this.gameManager.getGame(body.game.id);
+                    if (game) {
+                        game.setTurn(body);
+                        // game.moves++;
+                        // game.moves.push(body);
+                    }
                     break;
                 case 'end':
-                    // game.end = body;
-                    game.finished = new Date();
-                    if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
-                        game.winner = this.snakes.find(s => s.name == body.board.snakes[0].name);
-                        game.winner.wins++;
-                        // if (game.winner.wins.indexOf(game.id) === -1) {
-                        //     game.winner.wins.push(game.id);
-                        // }
+                    game = this.gameManager.getGame(body.game.id);
+                    if (game) {
+                        log.verbose('Received game ended', body.game.id, this.gameManager);
+                        // game.end = body;
+                        game.finished = new Date();
+                        if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
+                            game.winner = this.snakes.find(s => s.name == body.board.snakes[0].name);
+                            game.winner.wins++;
+                            // if (game.winner.wins.indexOf(game.id) === -1) {
+                            //     game.winner.wins.push(game.id);
+                            // }
+                        }
+                        this.scope.$broadcast('end');
                     }
-                    this.scope.$broadcast('end');
                     break;
             }
         }

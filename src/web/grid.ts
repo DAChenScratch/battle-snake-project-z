@@ -2,21 +2,26 @@ import { BTData, initBTData } from '../types/BTData';
 import snakes from "../server/snakes";
 import { invertColor } from '../lib/invertColor';
 
-export function loadGrid() {
-    // const colors = ['#2ecc71', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#34495e'];
+interface MoveData {
+    body: BTData,
+    logs: string[],
+}
+
+export function loadGrid(moveJson) {
     const grid = $('.grid');
 
     const getCol = (x, y) => {
         return grid.find('.row').eq(y).find('.col').eq(x);
     };
 
-    const drawBoard = (data: BTData) => {
-        data = initBTData(data);
+    const drawBoard = (moveJson: MoveData) => {
+        const data = initBTData(moveJson.body);
+
         const snake = snakes.find(s => s.name == data.you.name);
         console.log(data, snake.move(data));
         $('.log').html('');
-        if (data.log) {
-            for (const log of data.log) {
+        if (moveJson.logs) {
+            for (const log of moveJson.logs) {
                 $('<div>').text(log).appendTo('.log');
             }
         }
@@ -60,48 +65,5 @@ export function loadGrid() {
         }
     };
 
-    let game = null;
-    const loadGame = (gameFile, turn = null) => {
-        $('.moves').html('');
-        $.getJSON('../games/' + gameFile).done((response) => {
-            game = response;
-            if (turn) {
-                drawBoard(game.moves[turn]);
-            } else {
-                drawBoard(game.start);
-            }
-            for (const move of game.moves) {
-                if (!move || !move.turn) {
-                    continue;
-                }
-                $('<div>').addClass('move').data('turn', move.turn).text('Move ' + move.turn).appendTo('.moves');
-            }
-        }).fail((xhr, textStatus, errorThrown) => {
-            $('.log').text(textStatus + ': ' + errorThrown);
-            console.error(textStatus, errorThrown);
-        });
-    };
-
-    $('.game').click(function () {
-        const gameFile = $(this).data('game');
-        loadGame(gameFile);
-    });
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryGame = urlParams.get('game');
-    const queryTurn = urlParams.get('turn');
-    if (queryGame) {
-        loadGame(queryGame, queryTurn);
-    } else {
-        $('.game:last').click();
-    }
-
-    $('.moves').on('click', '.move', function () {
-        const turn = $(this).data('turn');
-        drawBoard(game.moves[turn]);
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?game=' + game.moves[turn].you.id + '&turn=' + turn;
-        window.history.pushState({
-            path: newUrl,
-        }, '', newUrl);
-    });
+    drawBoard(moveJson);
 };

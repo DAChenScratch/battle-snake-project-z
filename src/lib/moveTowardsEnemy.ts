@@ -1,12 +1,7 @@
-import { gridDistance } from './gridDistance';
 import { log } from './log';
-import { weight, BLOCKED_THRESHOLD } from './weight';
-import { closestFood } from './closestFood';
 import { BTData } from '../types/BTData';
-import { sortedFood } from './sortedFood';
-import { sortedEnemies } from './sortedEnemies';
-import { MoveDirection } from '../types/MoveDirection';
 import { Pather } from './Pather';
+import { isEnemy } from './isEnemy';
 
 export function moveTowardsEnemy(data: BTData) {
     const pather = new Pather(data, false);
@@ -15,7 +10,7 @@ export function moveTowardsEnemy(data: BTData) {
         path: null,
     };
     for (const snake of data.board.snakes) {
-        if (snake.id == data.you.id) {
+        if (!isEnemy(data.you, snake)) {
             continue;
         }
         if (snake.body.length >= data.you.body.length) {
