@@ -1,7 +1,8 @@
 <?php
 function readJsonFile($file)
 {
-    $content = file_get_contents($file);
+    $content = gzfile($file);
+    $content = implode($content);
     if (!$content) {
         throw new \Exception('Could not load file: ' . $file);
     }
@@ -24,10 +25,10 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
         'gameId' => basename($path),
         'mtime' => filemtime($path),
         'snakes' => array_map(function ($snakePath) use ($path, &$moveJson, $selectedGame, $selectedSnake, $selectedTurn) {
-            $start = readJsonFile($snakePath . '/0000_start.json');
+            $start = readJsonFile($snakePath . '/0000_start.json.gz');
             $moves = array_map(function ($movePath) {
-                return trim(preg_replace('/_|move|start|end|.json/', ' ', basename($movePath)));
-            }, glob($snakePath . '/*.json'));
+                return trim(preg_replace('/_|move|start|end|.json.gz/', ' ', basename($movePath)));
+            }, glob($snakePath . '/*.json.gz'));
             natsort($moves);
             $moves = array_combine($moves, $moves);
             if (basename($path) == $selectedGame && $start['body']['you']['id'] == $selectedSnake && isset($moves[$selectedTurn])) {
@@ -38,7 +39,7 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
                 if ($selectedTurn == '9999') {
                     $name = 'end';
                 }
-                $moveJson = readJsonFile($snakePath . '/' . $moves[$selectedTurn] . '_' . $name . '.json');
+                $moveJson = readJsonFile($snakePath . '/' . $moves[$selectedTurn] . '_' . $name . '.json.gz');
             }
             return [
                 'id' => $start['body']['you']['id'],

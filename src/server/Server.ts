@@ -74,7 +74,7 @@ export class Server {
                 this.snake.start(request.body);
 
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, 'start', {
+                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'start', {
                         body: request.body,
                         logs,
                     });
@@ -118,7 +118,7 @@ export class Server {
                 }
 
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, 'move', {
+                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'move', {
                         body: request.body,
                         logs,
                     });
@@ -140,7 +140,7 @@ export class Server {
             try {
                 log('end', this.snake.constructor.name);
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, 'end', {
+                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'end', {
                         body: request.body,
                         logs,
                     });
