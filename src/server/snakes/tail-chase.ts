@@ -8,9 +8,10 @@ import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { moveAway } from '../../lib/moveAway';
-import { BaseSnake } from './base-snake';
+import { BaseSnake, StateFunction } from './base-snake';
 import { ISnake } from './snake-interface';
 import { closestEnemyHead } from '../../lib/closestEnemyHead';
+import { MoveDirection } from '../../types/MoveDirection';
 
 export class TailChase extends BaseSnake implements ISnake {
     public port: number = 9005;
@@ -19,27 +20,24 @@ export class TailChase extends BaseSnake implements ISnake {
     public headType = HeadType.PIXEL;
     public tailType = TailType.HOOK;
 
-    move(request: BTRequest) {
-        let direction;
-        if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
-            direction = moveTowardsFoodPf(request);
-        }
+    protected states: StateFunction[] = [
+        this.getFood,
+        this.runAway,
+        moveTowardsTail,
+        smartRandomMove,
+        randomMove,
+    ];
 
+    private getFood(request: BTRequest): MoveDirection {
+        if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
+            return moveTowardsFoodPf(request);
+        }
+    }
+
+    private runAway(request: BTRequest): MoveDirection {
         const closest = closestEnemyHead(request);
         if (closest && closest.path.length <= 4) {
-            direction = moveAway(request);
+            return moveAway(request);
         }
-        if (!direction) {
-            direction = moveTowardsTail(request);
-        }
-        if (!direction) {
-            direction = smartRandomMove(request);
-        }
-        if (!direction) {
-            direction = randomMove(request.body);
-        }
-        return {
-            move: direction,
-        };
     }
 }

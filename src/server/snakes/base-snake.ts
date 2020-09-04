@@ -1,5 +1,10 @@
 import { Server } from '../Server';
 import { BTRequest } from '../../types/BTData';
+import { MoveDirection } from '../../types/MoveDirection';
+
+export interface StateFunction {
+    (request: BTRequest): MoveDirection
+}
 
 export abstract class BaseSnake {
     public info: any = {};
@@ -8,11 +13,26 @@ export abstract class BaseSnake {
     public enabled: boolean = false;
     public port: number;
 
+    protected states: StateFunction[];
+
     constructor() {
         this.info.name = this.name;
     }
 
-    start(request: BTRequest): void {
+    public start(request: BTRequest): void {
+    }
+
+    public move(request: BTRequest) {
+        let direction;
+        for (const state of this.states) {
+            if (direction = state(request)) {
+                request.log(state.name);
+                return {
+                    move: direction,
+                    shout: state.name,
+                };
+            }
+        }
     }
 
     public get name() {

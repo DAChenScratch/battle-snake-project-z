@@ -26,7 +26,7 @@ export function loadGrid(request: BTRequest) {
     $('.log').html('');
     if (request.logs) {
         for (const log of request.logs) {
-            $('<div>').text(log).appendTo('.log');
+            $('<div>').text(log.map(l => typeof l === 'string' ? l : JSON.stringify(l, null, 4)).join(' ')).appendTo('.log');
         }
     }
 

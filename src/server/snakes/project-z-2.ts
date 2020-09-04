@@ -29,7 +29,7 @@ export class ProjectZ2 extends BaseSnake implements ISnake {
             direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(request.body);
+            direction = randomMove(request);
         }
         return {
             move: direction,
