@@ -11,6 +11,7 @@ import { BaseSnake } from './base-snake';
 import { moveTowardsKill } from '../../lib/moveTowardsKill';
 import { lookAhead } from '../../lib/lookAhead';
 import { ISnake } from './snake-interface';
+import { ServerMoveResponse } from '../Server';
 
 export class Dunno extends BaseSnake implements ISnake {
     public port: number = 9007;
@@ -18,7 +19,7 @@ export class Dunno extends BaseSnake implements ISnake {
     public headType = HeadType.SAND_WORM;
     public tailType = TailType.PIXEL;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         direction = moveTowardsFoodPf(request);
         if (!direction) {

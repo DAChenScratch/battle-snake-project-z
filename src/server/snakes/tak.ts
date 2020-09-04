@@ -10,6 +10,7 @@ import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
 import { isEnemy } from '../../lib/isEnemy';
 import { ServerMoveResponse } from '../Server';
+import { MoveDirection } from '../../types/MoveDirection';
 
 export class Tak extends BaseSnake implements ISnake {
     public port: number = 9004;
@@ -18,8 +19,8 @@ export class Tak extends BaseSnake implements ISnake {
     public headType = HeadType.FANG;
     public tailType = TailType.FRECKLED;
 
-    public move(request: BTRequest): ServerMoveResponse {
-        let direction;
+    public move(request: BTRequest): ServerMoveResponse | null {
+        let direction: MoveDirection;
         let biggestSnake = 0;
         for (const snake of request.body.board.snakes) {
             if (!isEnemy(request.body.you, snake)) {

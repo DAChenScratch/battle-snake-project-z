@@ -17,7 +17,7 @@ export class ProjectZ extends BaseSnake implements ISnake {
     public headType = HeadType.BELUGA;
     public tailType = TailType.BLOCK_BUM;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         // Only go for food if smaller than other snake -2
         direction = moveTowardsFoodPf(request);

@@ -17,7 +17,7 @@ export class Rando extends BaseSnake implements ISnake {
     public headType = HeadType.REGULAR;
     public tailType = TailType.FAT_RATTLE;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         if (request.body.you.health < 20) {
             direction = moveTowardsFoodPf(request);

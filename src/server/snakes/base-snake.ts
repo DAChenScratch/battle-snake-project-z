@@ -1,4 +1,4 @@
-import { Server } from '../Server';
+import { Server, ServerMoveResponse } from '../Server';
 import { BTRequest } from '../../types/BTData';
 import { MoveDirection } from '../../types/MoveDirection';
 
@@ -22,7 +22,7 @@ export abstract class BaseSnake {
     public start(request: BTRequest): void {
     }
 
-    public move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         for (const state of this.states) {
             if (direction = state(request)) {
@@ -33,6 +33,7 @@ export abstract class BaseSnake {
                 };
             }
         }
+        return null;
     }
 
     public get name() {

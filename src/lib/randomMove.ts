@@ -4,7 +4,7 @@ import { BTData, BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { shuffle } from './shuffle';
 
-export function randomMove(request: BTRequest) {
+export function randomMove(request: BTRequest): MoveDirection {
     let direction, x, y;
     const directions = [MoveDirection.LEFT, MoveDirection.RIGHT, MoveDirection.UP, MoveDirection.DOWN];
     shuffle(directions);
@@ -36,4 +36,5 @@ export function randomMove(request: BTRequest) {
         }
     }
     log('randomMove', 'no-options');
+    return direction;
 }

@@ -18,7 +18,7 @@ export class KeepAway extends BaseSnake implements ISnake {
     public headType = HeadType.DEAD;
     public tailType = TailType.CURLED;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         if (request.body.you.health < 10) {
             direction = moveTowardsFoodPf(request);

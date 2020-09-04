@@ -14,7 +14,7 @@ export class LookAhead extends BaseSnake implements ISnake {
     public headType = HeadType.EVIL;
     public tailType = TailType.SHARP;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         return {
             move: lookAhead(request.body),
         };

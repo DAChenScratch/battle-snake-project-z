@@ -20,7 +20,7 @@ export class Aldo extends BaseSnake implements ISnake {
     public headType = HeadType.TONGUE;
     public tailType = TailType.SKINNY;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         // if (!request.storage.xDirection) {
         //     if (y % 2 === 0) {
         //         request.storage.xDirection = request.storage.xDirection || MoveDirection.RIGHT;

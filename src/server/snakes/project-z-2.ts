@@ -20,7 +20,7 @@ export class ProjectZ2 extends BaseSnake implements ISnake {
     public headType = HeadType.SILLY;
     public tailType = TailType.ROUND_BUM;
 
-    public move(request: BTRequest): ServerMoveResponse {
+    public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         direction = moveTowardsFoodPf(request);
         if (!direction) {

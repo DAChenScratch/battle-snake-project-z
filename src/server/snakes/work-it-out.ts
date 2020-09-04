@@ -45,16 +45,16 @@ export class WorkItOut extends BaseSnake implements ISnake {
     //     };
     // }
 
-    public move(request: BTRequest): ServerMoveResponse {
-        let direction;
-        for (const op of this.ops) {
-            direction = op(request);
-            if (direction) {
-                break;
-            }
-        }
-        return {
-            move: direction,
-        };
-    }
+    // public move(request: BTRequest): ServerMoveResponse | null {
+    //     let direction;
+    //     for (const op of this.ops) {
+    //         direction = op(request);
+    //         if (direction) {
+    //             break;
+    //         }
+    //     }
+    //     return {
+    //         move: direction,
+    //     };
+    // }
 }
