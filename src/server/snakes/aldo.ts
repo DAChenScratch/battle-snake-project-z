@@ -31,6 +31,7 @@ export class Aldo extends BaseSnake implements ISnake {
         // request.storage.turning = request.storage.turning || false;
         // request.storage.loopingBack = request.storage.loopingBack || false;
         request.storage.switch = request.storage.switch || false;
+        request.storage.gameOver = request.storage.gameOver || false;
 
         const { x, y } = request.body.you.body[0];
         const top = 0;
@@ -38,6 +39,21 @@ export class Aldo extends BaseSnake implements ISnake {
         const bottom = request.body.board.height - 1;
         const right = request.body.board.width - 1;
         const even = y % 2 === 0;
+        if (request.storage.gameOver || request.body.board.width * request.body.board.height - request.body.you.body.length == request.body.board.width - 2) {
+            request.storage.gameOver = true;
+            request.log('game over');
+            if (x == left + 2 && y == bottom - 1) {
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            if (y == bottom) {
+                return {
+                    move: MoveDirection.RIGHT,
+                };
+            }
+        }
+        return this.moveLeftGap(request, x, y, top, left, bottom, right, even);
 
         // if (x == left && y == top) {
         //     request.storage.switch = true;
@@ -118,6 +134,7 @@ export class Aldo extends BaseSnake implements ISnake {
         //         };
         //     }
         // }
+
         return this.moveLeftGap(request, x, y, top, left, bottom, right, even);
 
         // if (request.storage.switch) {
