@@ -1,7 +1,7 @@
 <?php
 function readRankings($file)
 {
-    $mySnakes = ['Project Z', 'Tak', 'Rando', 'Keep Away', 'Tail Chase'];
+    $mySnakes = ['Project Z', 'Tak', 'Rando', 'Keep Away', 'Tail Chase', 'Project Z / Tak'];
     $rankings = json_decode(file_get_contents($file), true);
     $datasets = [];
     $labels = [];
@@ -20,6 +20,7 @@ function readRankings($file)
                 'fill' => false,
                 // 'lineTension' => 0,
                 'borderWidth' => 2,
+                'hidden' => !in_array($player, $mySnakes),
             ];
         }
     }
