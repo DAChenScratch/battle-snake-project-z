@@ -1,4 +1,4 @@
-import { BTData, BTSnake } from '../types/BTData';
+import { BTData, BTSnake, BTRequest } from '../types/BTData';
 import { Pather, Path } from './Pather';
 import { isEnemy } from './isEnemy';
 import { MoveDirection } from '../types/MoveDirection';
@@ -9,18 +9,18 @@ interface ClosestEnemyHead {
     direction: MoveDirection,
 }
 
-export function closestEnemyHead(data: BTData): ClosestEnemyHead | null {
-    const pather = new Pather(data, false);
+export function closestEnemyHead(request: BTRequest): ClosestEnemyHead | null {
+    const pather = new Pather(request, false);
     const closest: ClosestEnemyHead = {
         snake: null,
         path: null,
         direction: null,
     };
-    for (const snake of data.board.snakes) {
-        if (!isEnemy(data.you, snake)) {
+    for (const snake of request.body.board.snakes) {
+        if (!isEnemy(request.body.you, snake)) {
             continue;
         }
-        if (data.you.body.length > snake.body.length) {
+        if (request.body.you.body.length > snake.body.length) {
             continue;
         }
         const path = pather.pathTo(snake.body[0].x, snake.body[0].y);

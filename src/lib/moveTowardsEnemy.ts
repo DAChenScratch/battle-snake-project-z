@@ -1,9 +1,9 @@
 import { log } from './log';
-import { BTData } from '../types/BTData';
+import { BTRequest } from '../types/BTData';
 import { closestEnemyHead } from './closestEnemyHead';
 
-export function moveTowardsEnemy(data: BTData) {
-    const closest = closestEnemyHead(data);
+export function moveTowardsEnemy(request: BTRequest) {
+    const closest = closestEnemyHead(request);
     if (closest && closest.direction) {
         log('moveTowardsEnemy', closest.direction);
         return closest.direction;

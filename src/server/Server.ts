@@ -8,13 +8,13 @@ const {
 
 import { Request, Response } from 'express';
 
-import { log, logs } from '../lib/log';
 import { writeFile } from '../lib/writeFile';
-import { BTData, initBTData } from '../types/BTData';
+import { BTData, BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { HttpError } from './handlers';
 import { WebSocketServer } from './WebSocketServer';
 import { ISnake } from './snakes/snake-interface';
+import { Storage } from './Storage';
 
 export interface ServerMoveResponse {
     move: MoveDirection,
@@ -25,12 +25,13 @@ export interface ServerMoveResponse {
 export interface Snake {
     server: Server,
     info: any,
-    start: (data: BTData) => void,
-    move: (data: BTData) => ServerMoveResponse,
+    start: (request: BTRequest) => void,
+    move: (request: BTRequest) => ServerMoveResponse,
 }
 
 export class Server {
     public webSocketServer: WebSocketServer;
+    private storage: Storage = new Storage();
 
     constructor(
         private port: number,
@@ -54,7 +55,6 @@ export class Server {
 
         app.get('/', (request: Request, response: Response) => {
             try {
-                log('ping', this.snake.constructor.name);
                 return response.json({
                     apiversion: '1',
                     author: 'petah',
@@ -68,45 +68,44 @@ export class Server {
             }
         });
 
-        app.post('/start', (request: Request, response: Response) => {
+        app.post('/start', (httpRequest: Request, httpResponse: Response) => {
             try {
-                log('start', this.snake.constructor.name);
-                this.snake.start(request.body);
+                const data: BTData = httpRequest.body;
+                const request: BTRequest = new BTRequest(data, this.storage.start(data.game.id, data.you.id));
+                request.log('start', this.snake.constructor.name);
+                this.snake.start(request);
 
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'start', {
-                        body: request.body,
-                        logs,
-                    });
+                    writeFile(data.game.id, data.you.id, this.snake.constructor.name, 'start', request);
                 }
                 this.webSocketServer.broadcast('start', {
                     snake: snake.info,
                     body: request.body,
                 });
 
-                logs.splice(0, logs.length);
                 if (this.apiVersion === 0) {
-                    return response.json({
+                    return httpResponse.json({
                         color: this.snake.color,
                         headType: this.snake.headType,
                         tailType: this.snake.tailType,
                     });
                 } else if (this.apiVersion === 1) {
-                    return response.json();
+                    return httpResponse.json();
                 }
             } catch (e) {
                 console.error(e);
             }
         });
 
-        app.post('/move', (request: Request, response: Response) => {
+        app.post('/move', (httpRequest: Request, httpResponse: Response) => {
             try {
-                log('move', this.snake.constructor.name);
-                const data: BTData = initBTData(request.body);
-                const moveResponse = this.snake.move(data);
+                const data: BTData = httpRequest.body;
+                const request: BTRequest = new BTRequest(data, this.storage.move(data.game.id, data.you.id));
+                request.log('move', this.snake.constructor.name);
+                const moveResponse = this.snake.move(request);
 
                 if (this.apiVersion === 0) {
-                    log('moveResponse', moveResponse);
+                    request.log('moveResponse', moveResponse);
                 } else if (this.apiVersion === 1) {
                     // Invert Y axis for api version 1
                     if (moveResponse.move === MoveDirection.UP) {
@@ -114,14 +113,11 @@ export class Server {
                     } else if (moveResponse.move === MoveDirection.DOWN) {
                         moveResponse.move = MoveDirection.UP;
                     }
-                    log('moveResponseV2', moveResponse);
+                    request.log('moveResponseV2', moveResponse);
                 }
 
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'move', {
-                        body: request.body,
-                        logs,
-                    });
+                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'move', request);
                 }
 
                 this.webSocketServer.broadcast('move', {
@@ -129,29 +125,28 @@ export class Server {
                     body: request.body,
                 });
 
-                logs.splice(0, logs.length);
-                return response.json(moveResponse);
+                return httpResponse.json(moveResponse);
             } catch (e) {
                 console.error(e);
             }
         });
 
-        app.post('/end', (request: Request, response: Response) => {
+        app.post('/end', (httpRequest: Request, httpResponse: Response) => {
             try {
-                log('end', this.snake.constructor.name);
+                const data: BTData = httpRequest.body;
+                const request: BTRequest = new BTRequest(data, this.storage.end(data.game.id, data.you.id));
+                request.log('end', this.snake.constructor.name);
+
                 if (this.saveGame) {
-                    writeFile(request.body.game.id, request.body.you.id, this.snake.constructor.name, 'end', {
-                        body: request.body,
-                        logs,
-                    });
+                    writeFile(httpRequest.body.game.id, httpRequest.body.you.id, this.snake.constructor.name, 'end', request);
                 }
 
                 this.webSocketServer.broadcast('end', {
                     snake: snake.info,
-                    body: request.body,
+                    body: httpRequest.body,
                 });
 
-                return response.json({});
+                return httpResponse.json({});
             } catch (e) {
                 console.error(e);
             }
@@ -159,7 +154,6 @@ export class Server {
 
         app.post('/ping', (request: Request, response: Response) => {
             try {
-                log('ping', this.snake.constructor.name);
                 return response.json();
             } catch (e) {
                 console.error(e);

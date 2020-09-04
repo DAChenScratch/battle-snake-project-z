@@ -6,9 +6,6 @@ export interface BTData {
     turn: number,
     board: BTBoard,
     you: BTSnake,
-    log: any[],
-    cache: any,
-    grid: any[]
 }
 
 export interface BTBoard {
@@ -35,16 +32,25 @@ export interface BTSnake {
     squad: string,
 }
 
-export function initBTData(data: BTData): BTData {
-    data.cache = {};
-    data.grid = [];
-    for (let y = 0; y < data.board.height; y++) {
-        data.grid[y] = [];
-        for (let x = 0; x < data.board.width; x++) {
-            data.grid[y][x] = {
-                color: 'rgba(0, 0, 0, 1)',
-            };
+export class BTRequest {
+    public cache: any = {};
+    public grid: any[] = [];
+    public readonly logs: any[] = [];
+
+    constructor(
+        public body: BTData,
+        public storage: any,
+    ) {
+        for (let y = 0; y < body.board.height; y++) {
+            this.grid[y] = [];
+            for (let x = 0; x < body.board.width; x++) {
+                this.grid[y][x] = {
+                };
+            }
         }
     }
-    return data;
+
+    public log(...args: any) {
+        this.logs.push(args);
+    }
 }

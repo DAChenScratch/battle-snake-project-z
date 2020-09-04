@@ -1,5 +1,5 @@
 
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -18,20 +18,20 @@ export class Dunno extends BaseSnake implements ISnake {
     public headType = HeadType.SAND_WORM;
     public tailType = TailType.PIXEL;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
-        direction = moveTowardsFoodPf(data);
+        direction = moveTowardsFoodPf(request);
         if (!direction) {
-            direction = moveAway(data);
+            direction = moveAway(request);
         }
         if (!direction) {
-            direction = lookAhead(data);
+            direction = lookAhead(request.body);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

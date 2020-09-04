@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -17,19 +17,19 @@ export class KeepAway extends BaseSnake implements ISnake {
     public headType = HeadType.DEAD;
     public tailType = TailType.CURLED;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
-        if (data.you.health < 10) {
-            direction = moveTowardsFoodPf(data);
+        if (request.body.you.health < 10) {
+            direction = moveTowardsFoodPf(request);
         }
         if (!direction) {
-            direction = moveAway(data);
+            direction = moveAway(request);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

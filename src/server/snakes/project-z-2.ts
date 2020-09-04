@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -19,17 +19,17 @@ export class ProjectZ2 extends BaseSnake implements ISnake {
     public headType = HeadType.SILLY;
     public tailType = TailType.ROUND_BUM;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
-        direction = moveTowardsFoodPf(data);
+        direction = moveTowardsFoodPf(request);
         if (!direction) {
-            direction = moveAway(data);
+            direction = moveAway(request);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

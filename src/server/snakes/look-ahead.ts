@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -13,9 +13,9 @@ export class LookAhead extends BaseSnake implements ISnake {
     public headType = HeadType.EVIL;
     public tailType = TailType.SHARP;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         return {
-            move: lookAhead(data),
+            move: lookAhead(request.body),
         };
     }
 }

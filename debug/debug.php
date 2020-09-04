@@ -19,6 +19,10 @@ $selectedTurn = $_GET['turn'] ?? null;
 
 $moveJson = null;
 $files = glob(__DIR__ . '/../games/*', GLOB_ONLYDIR);
+usort($files, function ($a, $b) {
+    return filemtime($b) <=> filemtime($a);
+});
+$files = array_slice($files, 0, 15);
 $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSnake, $selectedTurn) {
     return [
         'path' => $path,
@@ -49,15 +53,12 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
         }, glob($path . '/*', GLOB_ONLYDIR)),
     ];
 }, $files);
-usort($files, function ($a, $b) {
-    return $b['mtime'] <=> $a['mtime'];
-});
-$files = array_slice($files, 0, 50);
 ?>
-<html ng-app="battleSnake" ng-controller="DebugController" ng-init="moveJson = <?= htmlentities(json_encode($moveJson)); ?>">
+<html ng-app="battleSnake" ng-controller="DebugController" ng-init="request = <?= htmlentities(json_encode($moveJson)); ?>">
 
 <head>
     <!-- @todo use a cache buster -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css?cache=<?= md5_file(__DIR__ . '/styles.css'); ?>" />
 </head>
 
@@ -67,20 +68,20 @@ $files = array_slice($files, 0, 50);
             <div class="grid">
             </div>
             <div>
-                <button type="button" ng-click="recomputeWeights()">Recompute weights</button>
+                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights()">Recompute weights</button>
             </div>
         </div>
         <div class="scroll">
             <div class="games">
-                <a href="debug-delete.php">Delete</a>
+                <a class="btn btn-sm btn-danger" href="debug-delete.php">Delete</a>
                 <?php foreach ($files as $file) : ?>
                     <div>
-                        <?= date(DATE_ISO8601, $file['mtime']); ?>
-                        <?php foreach ($file['snakes'] as $snake) : ?>
-                            <div>
+                        <small><?= date(DATE_ISO8601, $file['mtime']); ?></small>
+                        <div>
+                            <?php foreach ($file['snakes'] as $snake) : ?>
                                 <a href="?game=<?= $file['gameId']; ?>&snake=<?= $snake['id']; ?>"><?= $snake['name']; ?></a>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -1,11 +1,12 @@
 import { isFree } from './isFree';
 import { log } from './log';
-import { BTData } from '../types/BTData';
+import { BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { shuffle } from './shuffle';
 import { weight } from './weight';
+import { request } from 'express';
 
-export function smartRandomMove(data: BTData) {
+export function smartRandomMove(request: BTRequest) {
     let x, y, w;
     let directions = [
         {
@@ -29,28 +30,28 @@ export function smartRandomMove(data: BTData) {
     for (const d of directions) {
         switch (d.direction) {
             case MoveDirection.UP:
-                x = data.you.body[0].x;
-                y = data.you.body[0].y - 1;
+                x = request.body.you.body[0].x;
+                y = request.body.you.body[0].y - 1;
                 break;
 
             case MoveDirection.DOWN:
-                x = data.you.body[0].x;
-                y = data.you.body[0].y + 1;
+                x = request.body.you.body[0].x;
+                y = request.body.you.body[0].y + 1;
                 break;
 
             case MoveDirection.LEFT:
-                x = data.you.body[0].x - 1;
-                y = data.you.body[0].y;
+                x = request.body.you.body[0].x - 1;
+                y = request.body.you.body[0].y;
                 break;
 
             case MoveDirection.RIGHT:
-                x = data.you.body[0].x + 1;
-                y = data.you.body[0].y;
+                x = request.body.you.body[0].x + 1;
+                y = request.body.you.body[0].y;
                 break;
         }
 
-        if (isFree(data, x, y)) {
-            d.weight = weight(data, x, y);
+        if (isFree(request.body, x, y)) {
+            d.weight = weight(request, x, y);
         }
     }
     directions = directions

@@ -1,5 +1,5 @@
 import { Server } from '../Server';
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 
 export abstract class BaseSnake {
     public info: any = {};
@@ -12,7 +12,7 @@ export abstract class BaseSnake {
         this.info.name = this.name;
     }
 
-    start(data: BTData): void {
+    start(request: BTRequest): void {
     }
 
     public get name() {

@@ -25,7 +25,6 @@ pre {
     padding: 10px;
 }
 
-.games,
 .moves {
     flex-direction: column;
     display: flex;
@@ -50,12 +49,12 @@ pre {
     flex-direction: column;
 }
 
-.row {
+.grid-row {
     display: flex;
     flex: 1;
 }
 
-.col {
+.grid-col {
     border: 1px solid #bbb;
     display: flex;
     flex-direction: column;
@@ -65,11 +64,11 @@ pre {
     position: relative;
 }
 
-.row:last-child .col {
+.grid-row:last-child .grid-col {
     border-bottom: 1px dashed #bbb;
 }
 
-.col:last-child {
+.grid-col:last-child {
     border-right: 1px dashed #bbb;
 }
 

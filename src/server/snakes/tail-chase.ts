@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -19,24 +19,24 @@ export class TailChase extends BaseSnake implements ISnake {
     public headType = HeadType.PIXEL;
     public tailType = TailType.HOOK;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
-        if (data.you.health < data.board.width || data.you.health < data.board.height) {
-            direction = moveTowardsFoodPf(data);
+        if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
+            direction = moveTowardsFoodPf(request);
         }
 
-        const closest = closestEnemyHead(data);
+        const closest = closestEnemyHead(request);
         if (closest && closest.path.length <= 4) {
-            direction = moveAway(data);
+            direction = moveAway(request);
         }
         if (!direction) {
-            direction = moveTowardsTail(data);
+            direction = moveTowardsTail(request);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

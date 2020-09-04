@@ -15,8 +15,11 @@ export class WebSocketClient {
         private scope: AngularScope,
     ) {
         this.url = `ws://localhost:1${snake.port}/`;
-        console.log('Connect web socket', this.url);
+        this.connect();
+    }
 
+    private connect() {
+        console.log('Connect web socket', this.url);
         this.socket = new WebSocket(this.url);
         this.socket.onmessage = this.handleWebsocketMessage.bind(this);
         this.socket.onclose = this.handleWebsocketClose.bind(this);
@@ -82,6 +85,9 @@ export class WebSocketClient {
 
     handleWebsocketClose() {
         console.log('Web socket close', this.url);
+        setTimeout(() => {
+            this.connect();
+        }, 500);
     }
 }
 

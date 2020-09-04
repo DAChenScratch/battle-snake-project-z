@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -17,31 +17,33 @@ export class Tak extends BaseSnake implements ISnake {
     public headType = HeadType.FANG;
     public tailType = TailType.FRECKLED;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
         let biggestSnake = 0;
-        for (const snake of data.board.snakes) {
-            if (!isEnemy(data.you, snake)) {
+        for (const snake of request.body.board.snakes) {
+            if (!isEnemy(request.body.you, snake)) {
                 continue;
             }
             if (snake.body.length > biggestSnake) {
                 biggestSnake = snake.body.length;
             }
         }
-        if (data.you.health < 15 || data.you.body.length < biggestSnake) {
-            direction = moveTowardsFoodPf(data);
+        // @todo allow crossing squad (not self)
+        // @todo make ai to move to biggest free space
+        if (request.body.you.health < 15 || request.body.you.body.length < biggestSnake) {
+            direction = moveTowardsFoodPf(request);
         }
         if (!direction) {
-            direction = moveTowardsEnemy(data);
+            direction = moveTowardsEnemy(request);
         }
         if (!direction) {
-            direction = moveTowardsFoodPf(data);
+            direction = moveTowardsFoodPf(request);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

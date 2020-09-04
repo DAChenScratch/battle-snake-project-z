@@ -1,21 +1,21 @@
 import { gridDistance } from './gridDistance';
-import { BTData } from '../types/BTData';
+import { BTData, BTRequest } from '../types/BTData';
 import { isFree } from './isFree';
 import { cache } from './cache';
 import { isEnemy, isSquad } from './isEnemy';
 
 export const BLOCKED_THRESHOLD = 10;
 
-export function floodFill(data: BTData, x: number, y: number) {
-    const c = cache(data, 'floodFill', {});
+export function floodFill(request: BTRequest, x: number, y: number) {
+    const c = cache(request, 'floodFill', {});
     const key = x + ':' + y;
     if (!c[key]) {
-        c[key] = floodFillCache(data, x, y);
+        c[key] = floodFillCache(request, x, y);
     }
     return c[key];
 }
 
-export function floodFillCache(data: BTData, x: number, y: number) {
+export function floodFillCache(request: BTRequest, x: number, y: number) {
     let count = 0;
     const nodes = [];
     nodes.push({
@@ -24,7 +24,7 @@ export function floodFillCache(data: BTData, x: number, y: number) {
     });
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        if (isFree(data, node.x, node.y)) {
+        if (isFree(request.body, node.x, node.y)) {
             count++;
             if (!nodes.find(n => n.x == node.x + 1 && n.y == node.y)) {
                 nodes.push({
@@ -55,7 +55,7 @@ export function floodFillCache(data: BTData, x: number, y: number) {
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         const key = node.x + ':' + node.y;
-        data.cache.floodFill[key] = count;
+        request.cache.floodFill[key] = count;
     }
     return count;
 };
@@ -98,18 +98,18 @@ const isNearTail = (data: BTData, x: number, y: number) => {
     return false;
 };
 
-export function weight(data: BTData, x: number, y: number, blockHeads = true) {
-    if (data.grid[y][x].weight === undefined) {
-        data.grid[y][x].weight = computeWeight(data, x, y, blockHeads);
-        let color = Math.round((data.grid[y][x].weight) / 100 * 255);
-        data.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
+export function weight(request: BTRequest, x: number, y: number, blockHeads = true) {
+    if (request.grid[y][x].weight === undefined) {
+        request.grid[y][x].weight = computeWeight(request, x, y, blockHeads);
+        let color = Math.round((request.grid[y][x].weight) / 100 * 255);
+        request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
     }
-    return data.grid[y][x].weight;
+    return request.grid[y][x].weight;
 }
 
-function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
-    if (data.board.hazards) {
-        for (const hazard of data.board.hazards) {
+function computeWeight(request: BTRequest, x: number, y: number, blockHeads = true) {
+    if (request.body.board.hazards) {
+        for (const hazard of request.body.board.hazards) {
             if (hazard.x == x && hazard.y == y) {
                 return 5;
             }
@@ -117,7 +117,7 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
     }
 
     let result = 100;
-    for (const snake of data.board.snakes) {
+    for (const snake of request.body.board.snakes) {
         const body = snake.body;
         // const body = snake.body.filter((p1, i, a) => a.findIndex(p2 => p1.x == p2.x && p1.y == p2.y) === i);
         for (const [p, part] of body.entries()) {
@@ -130,7 +130,7 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
                         continue;
                     }
                     // Check squad mode
-                    if (isSquad(data.you, snake)) {
+                    if (isSquad(request.body.you, snake)) {
                         continue;
                     }
                     return 0;
@@ -139,29 +139,29 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
         }
     }
 
-    // if (isOwnTail(data, x, y)) {
+    // if (isOwnTail(request.body, x, y)) {
     //     return 100;
     // }
 
-    // if (isNearTail(data, x, y)) {
+    // if (isNearTail(request.body, x, y)) {
     //     return 75;
     // }
 
-    if (isDeadEnd(data, x, y) && !isNearTail(data, x, y)) {
+    if (isDeadEnd(request.body, x, y) && !isNearTail(request.body, x, y)) {
         return 0;
     }
 
-    const fillCount = floodFill(data, x, y);
-    if (fillCount < data.you.body.length) {
+    const fillCount = floodFill(request, x, y);
+    if (fillCount < request.body.you.body.length) {
         result = Math.min(result, fillCount);
     }
 
     if (blockHeads) {
-        for (const snake of data.board.snakes) {
+        for (const snake of request.body.board.snakes) {
             const body = snake.body;
             for (const [p, part] of body.entries()) {
                 // Is near head?
-                if (snake.id != data.you.id && p == 0 && snake.body.length >= data.you.body.length) {
+                if (snake.id != request.body.you.id && p == 0 && snake.body.length >= request.body.you.body.length) {
                     const distance = gridDistance(x, y, part.x, part.y);
                     if (distance < 3) {
                         result = Math.min(result, distance * 10);
@@ -171,7 +171,7 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
         }
     }
 
-    for (const snake of data.board.snakes) {
+    for (const snake of request.body.board.snakes) {
         const body = snake.body;
         for (const [p, part] of body.entries()) {
             let tailWeight = 40;
@@ -202,11 +202,11 @@ function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
         result = Math.min(result, 35);
     }
 
-    if (x == data.board.width - 1) {
+    if (x == request.body.board.width - 1) {
         result = Math.min(result, 35);
     }
 
-    if (y == data.board.height - 1) {
+    if (y == request.body.board.height - 1) {
         result = Math.min(result, 35);
     }
 

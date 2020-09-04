@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { ProjectZ } from './project-z';
 import { KeepAway } from './keep-away';
 import { Rando } from './rando';
@@ -9,32 +9,247 @@ import { ISnake } from './snake-interface';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
+import { MoveDirection } from '../../types/MoveDirection';
 
-const CRC32 = require('crc-32');
 
 export class Aldo extends BaseSnake implements ISnake {
     public port: number = 9006;
-    private options: any[];
 
     public color = Color.POMEGRANATE;
     public headType = HeadType.TONGUE;
     public tailType = TailType.SKINNY;
 
-    constructor() {
-        super();
-        this.options = [ProjectZ, KeepAway, Rando, Tak, TailChase];
+    move(request: BTRequest) {
+        // if (!request.storage.xDirection) {
+        //     if (y % 2 === 0) {
+        //         request.storage.xDirection = request.storage.xDirection || MoveDirection.RIGHT;
+        //     } else {
+        //         request.storage.xDirection = request.storage.xDirection || MoveDirection.LEFT;
+        //     }
+        // }
+        // request.storage.yDirection = request.storage.yDirection || MoveDirection.UP;
+        // request.storage.turning = request.storage.turning || false;
+        // request.storage.loopingBack = request.storage.loopingBack || false;
+        request.storage.switch = request.storage.switch || false;
+
+        const { x, y } = request.body.you.body[0];
+        const top = 0;
+        const left = 0;
+        const bottom = request.body.board.height - 1;
+        const right = request.body.board.width - 1;
+        const even = y % 2 === 0;
+
+        // if (x == left && y == top) {
+        //     request.storage.switch = true;
+        //     return {
+        //         move: MoveDirection.RIGHT,
+        //     };
+        // }
+
+        // if (x == right && y == top) {
+        //     request.storage.switch = false;
+        //     return {
+        //         move: MoveDirection.LEFT,
+        //     };
+        // }
+
+        // if (request.storage.switch) {
+        //     if (x == right) {
+        //         return {
+        //             move: MoveDirection.UP,
+        //         };
+        //     }
+
+        //     if (y == bottom) {
+        //         return {
+        //             move: MoveDirection.RIGHT,
+        //         };
+        //     }
+
+        //     if (even) {
+        //         if (x == right - 1) {
+        //             return {
+        //                 move: MoveDirection.DOWN,
+        //             };
+        //         }
+        //         return {
+        //             move: MoveDirection.RIGHT,
+        //         };
+        //     } else {
+        //         if (x == left + 1) {
+        //             return {
+        //                 move: MoveDirection.DOWN,
+        //             };
+        //         }
+        //         return {
+        //             move: MoveDirection.LEFT,
+        //         };
+        //     }
+        // } else {
+        //     if (x == left) {
+        //         return {
+        //             move: MoveDirection.UP,
+        //         };
+        //     }
+
+        //     if (y == bottom) {
+        //         return {
+        //             move: MoveDirection.LEFT,
+        //         };
+        //     }
+
+        //     if (even) {
+        //         if (x == left + 1) {
+        //             return {
+        //                 move: MoveDirection.DOWN,
+        //             };
+        //         }
+        //         return {
+        //             move: MoveDirection.LEFT,
+        //         };
+        //     } else {
+        //         if (x == right - 1) {
+        //             return {
+        //                 move: MoveDirection.DOWN,
+        //             };
+        //         }
+        //         return {
+        //             move: MoveDirection.RIGHT,
+        //         };
+        //     }
+        // }
+        return this.moveLeftGap(request, x, y, top, left, bottom, right, even);
+
+        // if (request.storage.switch) {
+        //     return this.moveLeftGap(request, top, left, bottom, right, even);
+        // } else {
+        //     return this.moveRightGap(request, top, left, bottom, right, even);
+        // }
+
+        // if (request.body.board.height % 2 === 0) {
+        //     return this.moveRightGap(request, top, left, bottom, right, even);
+        // } else {
+        //     return this.moveLeftGap(request, top, left, bottom, right, even);
+        // }
     }
 
-    start(data: BTData) {
-        this.snake(data).start(data);
+    private moveRightGap(request: BTRequest, x: number, y: number, top: number, left: number, bottom: number, right: number, even: boolean) {
+
+        if (x == right && y != top) {
+            request.log('right up');
+            return {
+                move: MoveDirection.UP,
+            };
+        }
+
+        if (y == bottom) {
+            // if (x == right) {
+            //     request.log('bottom right up');
+            //     return {
+            //         move: MoveDirection.UP,
+            //     };
+            // }
+            request.log('bottom right');
+            return {
+                move: MoveDirection.RIGHT,
+            };
+        }
+
+        if (y == bottom) {
+            if (x == left) {
+                request.log('top left down');
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            request.log('top left');
+            return {
+                move: MoveDirection.LEFT,
+            };
+        }
+
+        if (even) {
+            if (x == left) {
+                request.log('even down');
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            request.log('even left');
+            return {
+                move: MoveDirection.LEFT,
+            };
+        } else {
+            if (x == right - 1) {
+                request.log('odd down');
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            request.log('odd right');
+            return {
+                move: MoveDirection.RIGHT,
+            };
+        }
     }
 
-    move(data: BTData) {
-        return this.snake(data).move(data);
-    }
+    private moveLeftGap(request: BTRequest, x: number, y: number, top: number, left: number, bottom: number, right: number, even: boolean) {
 
-    private snake(data: BTData) {
-        const crc = Math.abs(CRC32.str(data.you.id));
-        return new this.options[crc % this.options.length]();
+        if (x == left && y != top) {
+            request.log('left up');
+            return {
+                move: MoveDirection.UP,
+            };
+        }
+
+        if (y == bottom) {
+            // if (x == left) {
+            //     request.log('bottom left up');
+            //     return {
+            //         move: MoveDirection.UP,
+            //     };
+            // }
+            request.log('bottom left');
+            return {
+                move: MoveDirection.LEFT,
+            };
+        }
+
+        // if (y == bottom) {
+        //     if (x == left) {
+        //         request.log('top left down');
+        //         return {
+        //             move: MoveDirection.DOWN,
+        //         };
+        //     }
+        //     request.log('top left');
+        //     return {
+        //         move: MoveDirection.LEFT,
+        //     };
+        // }
+
+        if (even) {
+            if (x == right) {
+                request.log('even down');
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            request.log('even right', x, right);
+            return {
+                move: MoveDirection.RIGHT,
+            };
+        } else {
+            if (x == left + 1) {
+                request.log('odd down');
+                return {
+                    move: MoveDirection.DOWN,
+                };
+            }
+            request.log('odd left');
+            return {
+                move: MoveDirection.LEFT,
+            };
+        }
     }
 }

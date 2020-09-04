@@ -1,5 +1,5 @@
 import { weight, BLOCKED_THRESHOLD } from './weight';
-import { BTData, BTXY } from '../types/BTData';
+import { BTData, BTXY, BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 
 const PF = require('pathfinding');
@@ -20,25 +20,25 @@ export class Pather {
     private pfGrid;
 
     constructor(
-        private data: BTData,
+        private request: BTRequest,
         private blockHeads = true,
     ) {
         const matrix = [];
         const costs = [];
-        for (var y = 0; y < data.board.height; y++) {
+        for (var y = 0; y < request.body.board.height; y++) {
             matrix[y] = [];
             costs[y] = [];
-            for (var x = 0; x < data.board.width; x++) {
-                const w = weight(data, x, y, blockHeads);
+            for (var x = 0; x < request.body.board.width; x++) {
+                const w = weight(request, x, y, blockHeads);
                 matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
                 costs[y][x] = 100 - w;
             }
         }
-        this.pfGrid = new PF.Grid(data.board.width, data.board.height, matrix, costs);
+        this.pfGrid = new PF.Grid(request.body.board.width, request.body.board.height, matrix, costs);
     }
 
     pathTo(x: number, y: number): Path {
-        return pf.findPath(this.data.you.body[0].x, this.data.you.body[0].y, x, y, this.pfGrid.clone());
+        return pf.findPath(this.request.body.you.body[0].x, this.request.body.you.body[0].y, x, y, this.pfGrid.clone());
     }
 
     pathToDirection(path) {
@@ -47,13 +47,13 @@ export class Pather {
             if (i === 0) {
                 continue;
             }
-            if (point[0] == this.data.you.body[0].x - 1 && point[1] == this.data.you.body[0].y) {
+            if (point[0] == this.request.body.you.body[0].x - 1 && point[1] == this.request.body.you.body[0].y) {
                 return MoveDirection.LEFT;
-            } else if (point[0] == this.data.you.body[0].x + 1 && point[1] == this.data.you.body[0].y) {
+            } else if (point[0] == this.request.body.you.body[0].x + 1 && point[1] == this.request.body.you.body[0].y) {
                 return MoveDirection.RIGHT;
-            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y - 1) {
+            } else if (point[0] == this.request.body.you.body[0].x && point[1] == this.request.body.you.body[0].y - 1) {
                 return MoveDirection.UP;
-            } else if (point[0] == this.data.you.body[0].x && point[1] == this.data.you.body[0].y + 1) {
+            } else if (point[0] == this.request.body.you.body[0].x && point[1] == this.request.body.you.body[0].y + 1) {
                 return MoveDirection.DOWN;
             }
             break;

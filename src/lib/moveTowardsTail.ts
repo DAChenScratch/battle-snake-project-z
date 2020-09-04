@@ -1,11 +1,11 @@
 import { log } from './log';
-import { BTData } from '../types/BTData';
+import { BTData, BTRequest } from '../types/BTData';
 import { Pather } from './Pather';
 
 // @todo don't move if near bigger snake
-export function moveTowardsTail(data: BTData) {
-    const pather = new Pather(data, true);
-    const path = pather.pathTo(data.you.body[data.you.body.length - 1].x, data.you.body[data.you.body.length - 1].y);
+export function moveTowardsTail(request: BTRequest) {
+    const pather = new Pather(request, true);
+    const path = pather.pathTo(request.body.you.body[request.body.you.body.length - 1].x, request.body.you.body[request.body.you.body.length - 1].y);
     if (path.length) {
         const direction = pather.pathToDirection(path);
         if (direction) {

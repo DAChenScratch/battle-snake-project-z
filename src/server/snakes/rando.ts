@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -16,16 +16,16 @@ export class Rando extends BaseSnake implements ISnake {
     public headType = HeadType.REGULAR;
     public tailType = TailType.FAT_RATTLE;
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
-        if (data.you.health < 20) {
-            direction = moveTowardsFoodPf(data);
+        if (request.body.you.health < 20) {
+            direction = moveTowardsFoodPf(request);
         }
         if (!direction) {
-            direction = smartRandomMove(data);
+            direction = smartRandomMove(request);
         }
         if (!direction) {
-            direction = randomMove(data);
+            direction = randomMove(request.body);
         }
         return {
             move: direction,

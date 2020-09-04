@@ -1,18 +1,18 @@
 import { log } from './log';
-import { BTData } from '../types/BTData';
+import { BTData, BTRequest } from '../types/BTData';
 import { Pather } from './Pather';
 
-export function moveTowardsKill(data: BTData) {
-    const pather = new Pather(data, false);
+export function moveTowardsKill(request: BTRequest) {
+    const pather = new Pather(request, false);
     const closest = {
         snake: null,
         path: null,
     };
-    for (const snake of data.board.snakes) {
-        if (snake.id == data.you.id) {
+    for (const snake of request.body.board.snakes) {
+        if (snake.id == request.body.you.id) {
             continue;
         }
-        if (snake.body.length >= data.you.body.length) {
+        if (snake.body.length >= request.body.you.body.length) {
             continue;
         }
         const path = pather.pathTo(snake.body[0].x, snake.body[0].y);

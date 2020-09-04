@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
@@ -23,32 +23,32 @@ export class WorkItOut extends BaseSnake implements ISnake {
     private opsCount: number;
     public ops: any[];
 
-    start(data: BTData) {
-        const options = [
-            moveAway,
-            moveTowardsEnemy,
-            moveTowardsFoodPf,
-            moveTowardsTail,
-            randomMove,
-            smartRandomMove,
-        ];
-        this.opsCount = Math.ceil(Math.random() * options.length);
-        this.ops = [];
-        while (this.ops.length < this.opsCount) {
-            this.ops.push(options[Math.floor(Math.random() * options.length)]);
-        }
-        this.ops = this.ops.filter((v, i, a) => a.indexOf(v) === i);
+    // move(request: BTRequest) {
+    //     const options = [
+    //         moveAway,
+    //         moveTowardsEnemy,
+    //         moveTowardsFoodPf,
+    //         moveTowardsTail,
+    //         randomMove,
+    //         smartRandomMove,
+    //     ];
+    //     this.opsCount = Math.ceil(Math.random() * options.length);
+    //     this.ops = [];
+    //     while (this.ops.length < this.opsCount) {
+    //         this.ops.push(options[Math.floor(Math.random() * options.length)]);
+    //     }
+    //     this.ops = this.ops.filter((v, i, a) => a.indexOf(v) === i);
 
-        this.info = {
-            name: this.constructor.name,
-            ops: this.ops.map(op => op.name),
-        };
-    }
+    //     this.info = {
+    //         name: this.constructor.name,
+    //         ops: this.ops.map(op => op.name),
+    //     };
+    // }
 
-    move(data: BTData) {
+    move(request: BTRequest) {
         let direction;
         for (const op of this.ops) {
-            direction = op(data);
+            direction = op(request);
             if (direction) {
                 break;
             }

@@ -1,4 +1,4 @@
-import { BTData } from '../../types/BTData';
+import { BTRequest } from '../../types/BTData';
 import { Server, ServerMoveResponse } from '../Server';
 import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
@@ -18,6 +18,6 @@ export interface ISnake {
         name: string,
         url: string,
     },
-    start: (data: BTData) => void,
-    move: (data: BTData) => ServerMoveResponse,
+    start: (request: BTRequest) => void,
+    move: (request: BTRequest) => ServerMoveResponse,
 }
