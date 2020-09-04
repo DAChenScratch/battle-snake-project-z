@@ -39,17 +39,29 @@ export class Aldo extends BaseSnake implements ISnake {
         const bottom = request.body.board.height - 1;
         const right = request.body.board.width - 1;
         const even = y % 2 === 0;
-        if (request.storage.gameOver || request.body.board.width * request.body.board.height - request.body.you.body.length == request.body.board.width - 2) {
+        if (request.storage.gameOver || request.body.board.width * request.body.board.height - (request.body.you.body.length + 1) == request.body.board.width - 2) {
             request.storage.gameOver = true;
             request.log('game over');
-            if (x == left + 2 && y == bottom - 1) {
+            if (x == right && y == bottom - 1) {
                 return {
                     move: MoveDirection.DOWN,
                 };
             }
+            if (x == left + 2) {
+                if (y == bottom - 1) {
+                    return {
+                        move: MoveDirection.RIGHT,
+                    };
+                }
+                if (y == bottom) {
+                    return {
+                        move: MoveDirection.UP,
+                    };
+                }
+            }
             if (y == bottom) {
                 return {
-                    move: MoveDirection.RIGHT,
+                    move: MoveDirection.LEFT,
                 };
             }
         }
