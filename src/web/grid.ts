@@ -57,6 +57,14 @@ export function loadGrid(moveJson) {
             const col = getCol(food.x, food.y);
             $('<div>').addClass('food').appendTo(col);
         }
+        if (moveJson.body.board.hazards) {
+            for (const hazard of moveJson.body.board.hazards) {
+                const col = getCol(hazard.x, hazard.y);
+                col.css({
+                    borderColor: '#ff0000',
+                });
+            }
+        }
         for (const snake of moveJson.body.board.snakes) {
             let color = '#e74c3c';
             if (snake.id == moveJson.body.you.id) {

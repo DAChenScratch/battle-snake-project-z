@@ -15,7 +15,7 @@ export interface BTBoard {
     width: number,
     height: number,
     food: BTXY[],
-    hazards: BTXY[],
+    hazards?: BTXY[],
     snakes: BTSnake[],
 }
 

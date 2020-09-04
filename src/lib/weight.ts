@@ -108,6 +108,14 @@ export function weight(data: BTData, x: number, y: number, blockHeads = true) {
 }
 
 function computeWeight(data: BTData, x: number, y: number, blockHeads = true) {
+    if (data.board.hazards) {
+        for (const hazard of data.board.hazards) {
+            if (hazard.x == x && hazard.y == y) {
+                return 5;
+            }
+        }
+    }
+
     let result = 100;
     for (const snake of data.board.snakes) {
         const body = snake.body;
