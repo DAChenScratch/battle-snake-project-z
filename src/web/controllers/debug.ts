@@ -5,7 +5,7 @@ import { BTRequest } from '../../types/BTData';
 
 interface DebugControllerScope extends AngularScope {
     request: BTRequest,
-    recomputeWeights: () => void,
+    recomputeWeights: (blockHeads: boolean) => void,
 }
 
 export const DebugController = [
@@ -17,7 +17,7 @@ export const DebugController = [
             loadGrid($scope.request);
         });
 
-        $scope.recomputeWeights = () => {
+        $scope.recomputeWeights = (blockHeads: boolean) => {
             console.log('Recompute weights');
             for (var y = 0; y < $scope.request.body.board.height; y++) {
                 for (var x = 0; x < $scope.request.body.board.width; x++) {

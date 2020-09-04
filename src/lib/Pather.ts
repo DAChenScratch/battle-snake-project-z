@@ -1,4 +1,4 @@
-import { weight, BLOCKED_THRESHOLD } from './weight';
+import { weight, BLOCKED_THRESHOLD, weightHeadless } from './weight';
 import { BTData, BTXY, BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 
@@ -29,7 +29,7 @@ export class Pather {
             matrix[y] = [];
             costs[y] = [];
             for (var x = 0; x < request.body.board.width; x++) {
-                const w = weight(request, x, y, blockHeads);
+                const w = blockHeads ? weight(request, x, y) : weightHeadless(request, x, y);
                 matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
                 costs[y][x] = 100 - w;
             }

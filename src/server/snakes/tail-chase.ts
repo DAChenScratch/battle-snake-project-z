@@ -22,7 +22,7 @@ export class TailChase extends BaseSnake implements ISnake {
 
     protected states: StateFunction[] = [
         this.getFood,
-        this.runAway,
+        this.runAwayRandom,
         moveTowardsTail,
         smartRandomMove,
         randomMove,
@@ -31,6 +31,13 @@ export class TailChase extends BaseSnake implements ISnake {
     private getFood(request: BTRequest): MoveDirection {
         if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
             return moveTowardsFoodPf(request);
+        }
+    }
+
+    private runAwayRandom(request: BTRequest): MoveDirection {
+        const closest = closestEnemyHead(request);
+        if (closest && closest.path.length <= 4) {
+            return smartRandomMove(request);
         }
     }
 

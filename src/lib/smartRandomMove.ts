@@ -57,6 +57,7 @@ export function smartRandomMove(request: BTRequest) {
     directions = directions
         .filter(d => d.weight > 0)
         .sort((a, b) => b.weight - a.weight);
+    request.log('smartRandomMove directions', directions);
     if (!directions.length) {
         log('smartRandomMove', 'no-options');
         return;

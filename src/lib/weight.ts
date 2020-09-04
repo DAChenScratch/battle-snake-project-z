@@ -98,13 +98,22 @@ const isNearTail = (data: BTData, x: number, y: number) => {
     return false;
 };
 
-export function weight(request: BTRequest, x: number, y: number, blockHeads = true) {
+export function weight(request: BTRequest, x: number, y: number) {
     if (request.grid[y][x].weight === undefined) {
-        request.grid[y][x].weight = computeWeight(request, x, y, blockHeads);
+        request.grid[y][x].weight = computeWeight(request, x, y, true);
         let color = Math.round((request.grid[y][x].weight) / 100 * 255);
         request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
     }
     return request.grid[y][x].weight;
+}
+
+export function weightHeadless(request: BTRequest, x: number, y: number) {
+    if (request.grid[y][x].weightHeadless === undefined) {
+        request.grid[y][x].weightHeadless = computeWeight(request, x, y, false);
+        let color = Math.round((request.grid[y][x].weightHeadless) / 100 * 255);
+        request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
+    }
+    return request.grid[y][x].weightHeadless;
 }
 
 function computeWeight(request: BTRequest, x: number, y: number, blockHeads = true) {
