@@ -10,7 +10,10 @@ interface ClosestEnemyHead {
 }
 
 export function closestEnemyHead(request: BTRequest): ClosestEnemyHead | null {
-    const pather = new Pather(request, false);
+    const pather = new Pather(request, {
+        blockHeads: false,
+        attackHeads: true,
+    });
     const closest: ClosestEnemyHead = {
         snake: null,
         path: null,

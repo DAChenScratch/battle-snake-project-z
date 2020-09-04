@@ -3,13 +3,10 @@ import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
 import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
-import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
-import { moveTowardsTail } from '../../lib/moveTowardsTail';
-import { moveTowardsKill } from '../../lib/moveTowardsKill';
 import { ISnake } from './snake-interface';
 import { ServerMoveResponse } from '../Server';
 

@@ -3,7 +3,10 @@ import { BTData, BTRequest } from '../types/BTData';
 import { Pather } from './Pather';
 
 export function moveTowardsKill(request: BTRequest) {
-    const pather = new Pather(request, false);
+    const pather = new Pather(request, {
+        blockHeads: false,
+        attackHeads: true,
+    });
     const closest = {
         snake: null,
         path: null,
@@ -26,13 +29,13 @@ export function moveTowardsKill(request: BTRequest) {
     if (closest.path) {
         const direction = pather.pathToDirection(closest.path);
         if (direction) {
-            log('moveTowardsKill', direction);
+            request.log('moveTowardsKill', direction);
             return direction;
         } else {
-            log('moveTowardsKill', 'no direction');
+            request.log('moveTowardsKill', 'no direction');
         }
     } else {
-        log('moveTowardsKill', 'no closest');
+        request.log('moveTowardsKill', 'no closest');
     }
-    log('moveTowardsKill', 'no options');
+    request.log('moveTowardsKill', 'no options');
 }

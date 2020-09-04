@@ -3,10 +3,13 @@ import { log } from './log';
 import { BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { shuffle } from './shuffle';
-import { weight } from './weight';
+import { weight, WeightOptions } from './weight';
 import { request } from 'express';
 
-export function smartRandomMove(request: BTRequest) {
+export function smartRandomMove(request: BTRequest, weightOptions: WeightOptions = {
+    blockHeads: true,
+    attackHeads: true,
+}) {
     let x, y, w;
     let directions = [
         {
@@ -51,7 +54,7 @@ export function smartRandomMove(request: BTRequest) {
         }
 
         if (isFree(request.body, x, y)) {
-            d.weight = weight(request, x, y);
+            d.weight = weight(request, x, y, weightOptions);
         }
     }
     directions = directions

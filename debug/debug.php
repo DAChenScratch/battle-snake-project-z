@@ -68,8 +68,9 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
             <div class="grid">
             </div>
             <div>
-                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights(false)">Recompute weights</button>
-                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights(true)">Recompute weights with head blocking</button>
+                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights(blockHeads, attackHeads)">Compute weights</button>
+                <input type="checkbox" ng-model="blockHeads" /> Block heads
+                <input type="checkbox" ng-model="attackHeads" /> Attack heads
             </div>
         </div>
         <div class="scroll">

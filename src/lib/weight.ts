@@ -98,25 +98,21 @@ const isNearTail = (data: BTData, x: number, y: number) => {
     return false;
 };
 
-export function weight(request: BTRequest, x: number, y: number) {
-    if (request.grid[y][x].weight === undefined) {
-        request.grid[y][x].weight = computeWeight(request, x, y, true);
-        let color = Math.round((request.grid[y][x].weight) / 100 * 255);
-        request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
-    }
+export interface WeightOptions {
+    blockHeads: boolean,
+    attackHeads: boolean,
+}
+
+export function weight(request: BTRequest, x: number, y: number, options: WeightOptions): number {
+    request.grid[y][x].weight = computeWeight(request, x, y, options);
+
+    let color = Math.round((request.grid[y][x].weight) / 100 * 255);
+    request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
+
     return request.grid[y][x].weight;
 }
 
-export function weightHeadless(request: BTRequest, x: number, y: number) {
-    if (request.grid[y][x].weightHeadless === undefined) {
-        request.grid[y][x].weightHeadless = computeWeight(request, x, y, false);
-        let color = Math.round((request.grid[y][x].weightHeadless) / 100 * 255);
-        request.grid[y][x].color = `rgba(${color}, ${color}, ${color}, 1)`;
-    }
-    return request.grid[y][x].weightHeadless;
-}
-
-function computeWeight(request: BTRequest, x: number, y: number, blockHeads = true) {
+function computeWeight(request: BTRequest, x: number, y: number, options: WeightOptions): number {
     if (request.body.board.hazards) {
         for (const hazard of request.body.board.hazards) {
             if (hazard.x == x && hazard.y == y) {
@@ -135,7 +131,7 @@ function computeWeight(request: BTRequest, x: number, y: number, blockHeads = tr
                 // Is end of snake?
                 if (p != body.length - 1) {
                     // Is head of snake, and head blocking?
-                    if (p === 0 && !blockHeads) {
+                    if (p === 0 && !options.blockHeads) {
                         continue;
                     }
                     // Check squad mode
@@ -165,7 +161,7 @@ function computeWeight(request: BTRequest, x: number, y: number, blockHeads = tr
         result = Math.min(result, fillCount);
     }
 
-    if (blockHeads) {
+    if (options.attackHeads) {
         for (const snake of request.body.board.snakes) {
             const body = snake.body;
             for (const [p, part] of body.entries()) {

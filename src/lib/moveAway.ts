@@ -47,7 +47,10 @@ export function moveAway(request: BTRequest, minDistance = null) {
         distance: null,
         pathDirection: null,
     };
-    let pather = new Pather(request);
+    let pather = new Pather(request, {
+        blockHeads: true,
+        attackHeads: true,
+    });
     const grid = [];
     for (let y = 0; y < request.body.board.height; y++) {
         const row = [];
@@ -67,24 +70,27 @@ export function moveAway(request: BTRequest, minDistance = null) {
     }
 
     if (minDistance !== null) {
-        pather = new Pather(request, false);
+        pather = new Pather(request, {
+            blockHeads: false,
+            attackHeads: true,
+        });
         for (const snake of request.body.board.snakes) {
             if (snake.id == request.body.you.id) {
                 continue;
             }
             const path = pather.pathTo(snake.body[0].x, snake.body[0].y);
             if (path.length && path.length <= minDistance) {
-                log('moveAway', 'minDistance', furthestAway);
+                request.log('moveAway', 'minDistance', furthestAway);
                 return furthestAway.pathDirection;
             }
         }
-        log('moveAway', 'minDistance', 'no need');
+        request.log('moveAway', 'minDistance', 'no need');
         return;
     }
 
     if (furthestAway) {
-        log('moveAway', furthestAway);
+        request.log('moveAway', furthestAway);
         return furthestAway.pathDirection;
     }
-    log('moveAway', 'no options');
+    request.log('moveAway', 'no options');
 }

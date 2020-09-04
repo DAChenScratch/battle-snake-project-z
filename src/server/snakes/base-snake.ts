@@ -6,6 +6,10 @@ export interface StateFunction {
     (request: BTRequest): MoveDirection
 }
 
+export interface StateFunction {
+    (request: BTRequest): MoveDirection
+}
+
 export abstract class BaseSnake {
     public info: any = {};
     public server: Server;
