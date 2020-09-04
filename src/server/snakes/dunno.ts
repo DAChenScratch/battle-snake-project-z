@@ -18,7 +18,7 @@ export class Dunno extends BaseSnake implements ISnake {
     public headType = HeadType.SAND_WORM;
     public tailType = TailType.PIXEL;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         direction = moveTowardsFoodPf(request);
         if (!direction) {

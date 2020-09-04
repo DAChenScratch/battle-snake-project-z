@@ -11,6 +11,7 @@ import { BaseSnake } from './base-snake';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
 import { moveTowardsKill } from '../../lib/moveTowardsKill';
 import { ISnake } from './snake-interface';
+import { ServerMoveResponse } from '../Server';
 
 export class ProjectZ2 extends BaseSnake implements ISnake {
     public port: number = 9009;
@@ -19,7 +20,7 @@ export class ProjectZ2 extends BaseSnake implements ISnake {
     public headType = HeadType.SILLY;
     public tailType = TailType.ROUND_BUM;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         direction = moveTowardsFoodPf(request);
         if (!direction) {

@@ -8,6 +8,7 @@ import { smartRandomMove } from '../../lib/smartRandomMove';
 import { moveAway } from '../../lib/moveAway';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
+import { ServerMoveResponse } from '../Server';
 
 export class ProjectZ extends BaseSnake implements ISnake {
     public port: number = 9001;
@@ -16,7 +17,7 @@ export class ProjectZ extends BaseSnake implements ISnake {
     public headType = HeadType.BELUGA;
     public tailType = TailType.BLOCK_BUM;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         // Only go for food if smaller than other snake -2
         direction = moveTowardsFoodPf(request);

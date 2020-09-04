@@ -5,6 +5,7 @@ import { TailType } from '../../types/TailType';
 import { BaseSnake } from './base-snake';
 import { lookAhead } from '../../lib/lookAhead';
 import { ISnake } from './snake-interface';
+import { ServerMoveResponse } from '../Server';
 
 export class LookAhead extends BaseSnake implements ISnake {
     public port: number = 9010;
@@ -13,7 +14,7 @@ export class LookAhead extends BaseSnake implements ISnake {
     public headType = HeadType.EVIL;
     public tailType = TailType.SHARP;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         return {
             move: lookAhead(request.body),
         };

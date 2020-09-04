@@ -10,6 +10,7 @@ import { Color } from '../../types/Color';
 import { HeadType } from '../../types/HeadType';
 import { TailType } from '../../types/TailType';
 import { MoveDirection } from '../../types/MoveDirection';
+import { ServerMoveResponse } from '../Server';
 
 
 export class Aldo extends BaseSnake implements ISnake {
@@ -19,7 +20,7 @@ export class Aldo extends BaseSnake implements ISnake {
     public headType = HeadType.TONGUE;
     public tailType = TailType.SKINNY;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         // if (!request.storage.xDirection) {
         //     if (y % 2 === 0) {
         //         request.storage.xDirection = request.storage.xDirection || MoveDirection.RIGHT;

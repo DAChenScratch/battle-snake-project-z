@@ -8,6 +8,7 @@ import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
+import { ServerMoveResponse } from '../Server';
 
 export class Rando extends BaseSnake implements ISnake {
     public port: number = 9003;
@@ -16,7 +17,7 @@ export class Rando extends BaseSnake implements ISnake {
     public headType = HeadType.REGULAR;
     public tailType = TailType.FAT_RATTLE;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         if (request.body.you.health < 20) {
             direction = moveTowardsFoodPf(request);

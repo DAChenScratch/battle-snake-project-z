@@ -8,7 +8,7 @@ import { smartRandomMove } from '../../lib/smartRandomMove';
 import { randomMove } from '../../lib/randomMove';
 import { moveAway } from '../../lib/moveAway';
 import { moveTowardsTail } from '../../lib/moveTowardsTail';
-import { Server } from '../Server';
+import { Server, ServerMoveResponse } from '../Server';
 import { WebSocketServer } from '../WebSocketServer';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
@@ -45,7 +45,7 @@ export class WorkItOut extends BaseSnake implements ISnake {
     //     };
     // }
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         for (const op of this.ops) {
             direction = op(request);

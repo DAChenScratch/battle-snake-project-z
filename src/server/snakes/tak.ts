@@ -9,6 +9,7 @@ import { smartRandomMove } from '../../lib/smartRandomMove';
 import { BaseSnake } from './base-snake';
 import { ISnake } from './snake-interface';
 import { isEnemy } from '../../lib/isEnemy';
+import { ServerMoveResponse } from '../Server';
 
 export class Tak extends BaseSnake implements ISnake {
     public port: number = 9004;
@@ -17,7 +18,7 @@ export class Tak extends BaseSnake implements ISnake {
     public headType = HeadType.FANG;
     public tailType = TailType.FRECKLED;
 
-    move(request: BTRequest) {
+    public move(request: BTRequest): ServerMoveResponse {
         let direction;
         let biggestSnake = 0;
         for (const snake of request.body.board.snakes) {
