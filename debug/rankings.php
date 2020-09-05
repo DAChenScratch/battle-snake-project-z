@@ -18,8 +18,8 @@ function readRankings($file)
                 'type' => 'line',
                 'pointRadius' => 0,
                 'fill' => false,
-                // 'lineTension' => 0,
-                'borderWidth' => 2,
+                'lineTension' => 0,
+                'borderWidth' => 1,
                 'hidden' => !in_array($player, $mySnakes),
             ];
         }
@@ -85,7 +85,7 @@ function readRankings($file)
                                     text: <?= json_encode($label); ?>,
                                 },
                                 animation: {
-                                    duration: 0
+                                    duration: 0,
                                 },
                                 tooltips: {
                                     mode: 'index',
@@ -93,18 +93,18 @@ function readRankings($file)
                                 },
                                 hover: {
                                     mode: 'nearest',
-                                    intersect: true
+                                    intersect: true,
                                 },
                                 scales: {
                                     xAxes: [{
                                         display: true,
                                         type: 'time',
                                         time: {
-                                            tooltipFormat: 'll HH:mm'
+                                            tooltipFormat: 'll HH:mm',
                                         },
                                         scaleLabel: {
                                             display: true,
-                                            labelString: 'Date'
+                                            labelString: 'Date',
                                         }
                                     }],
                                     yAxes: [{
@@ -115,11 +115,26 @@ function readRankings($file)
                                         },
                                         scaleLabel: {
                                             display: true,
-                                            labelString: 'Rank'
-                                        }
-                                    }]
+                                            labelString: 'Rank',
+                                        },
+                                    }],
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: "x",
+                                    speed: 10,
+                                    threshold: 10
+                                },
+                                zoom: {
+                                    enabled: true,
+                                    drag: false,
+                                    mode: "xy",
+                                    limits: {
+                                        max: 10,
+                                        min: 0.5
+                                    }
                                 }
-                            }
+                            },
                         });
                     })();
                 </script>
