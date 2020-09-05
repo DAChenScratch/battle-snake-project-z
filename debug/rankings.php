@@ -49,6 +49,15 @@ function readRankings($file)
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.6.1/randomColor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/0.6.3/chartjs-plugin-zoom.js"></script>
+    <script>
+        const charts = [];
+        function resetZoom() {
+            for (const chart of charts) {
+                chart.resetZoom();
+            }
+        }
+    </script>
     <div class="container-fluid">
         <div class="row">
             <?php foreach (glob(__DIR__ . '/../scrapes/*.json') as $file) : ?>
@@ -61,8 +70,8 @@ function readRankings($file)
                         const LABELS = <?= json_encode($labels); ?>;
                         const DATASETS = <?= json_encode($datasets); ?>;
 
-                        var ctx = document.getElementById(<?= json_encode($label); ?>).getContext('2d');
-                        window.myLine = new Chart(ctx, {
+                        const context = document.getElementById(<?= json_encode($label); ?>).getContext('2d');
+                        charts.push(new Chart(context, {
                             type: 'line',
                             data: {
                                 labels: LABELS.map(time => new Date(time)),
@@ -135,11 +144,12 @@ function readRankings($file)
                                     }
                                 }
                             },
-                        });
+                        }));
                     })();
                 </script>
             <?php endforeach; ?>
         </div>
+        <button type="btn" class="btn btn-primary" onclick="resetZoom()">Reset Zoom</button>
     </div>
 </body>
 
