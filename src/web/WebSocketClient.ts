@@ -46,6 +46,7 @@ export class WebSocketClient {
                     if (!game) {
                         game = this.gameManager.initGame(body.game.id);
                     }
+                    game.setStart(body);
                     // game.start = body;
                     // game.snakes.push(data.snake);
                     break;
@@ -61,15 +62,7 @@ export class WebSocketClient {
                     game = this.gameManager.getGame(body.game.id);
                     if (game) {
                         log.verbose('Received game ended', body.game.id, this.gameManager);
-                        // game.end = body;
-                        game.finished = new Date();
-                        if (body.board.snakes[0] && body.board.snakes[0].name == this.snake.name) {
-                            game.winner = this.snakes.find(s => s.name == body.board.snakes[0].name);
-                            game.winner.wins++;
-                            // if (game.winner.wins.indexOf(game.id) === -1) {
-                            //     game.winner.wins.push(game.id);
-                            // }
-                        }
+                        game.setEnd(body);
                         this.scope.$broadcast('end');
                     }
                     break;

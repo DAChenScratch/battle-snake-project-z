@@ -88,9 +88,10 @@
                             <td>{{ game.winner.name }}</td>
                             <td>
                                 <div ng-repeat="snake in game.snakes">
-                                    <b>{{ snake.name }}</b>
-                                    <small>{{ snake }}</small>
-                                    <div ng-repeat="op in snake.ops track by $index">{{ op }}</div>
+                                    <small>name:</small> {{ snake.name }}
+                                    <small>health: </small> {{ snake.health }}
+                                    <small>length: </small> {{ snake.body.length }}
+                                    <small>alive: </small> {{ snake.alive ? 'Yes' : 'No' }}
                                 </div>
                             </td>
                         </tr>
