@@ -91,9 +91,9 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
         <div class="scroll">
             <div class="moves">
                 <?php foreach ($files as $file) : ?>
-                    <?php if ($_GET['game'] !== $file['gameId']) continue; ?>
+                    <?php if ($selectedGame !== $file['gameId']) continue; ?>
                     <?php foreach ($file['snakes'] as $snake) : ?>
-                        <?php if ($_GET['snake'] !== $snake['id']) continue; ?>
+                        <?php if ($selectedSnake !== $snake['id']) continue; ?>
                         <?php foreach ($snake['moves'] as $move) : ?>
                             <div>
                                 <a href="?game=<?= $file['gameId']; ?>&snake=<?= $snake['id']; ?>&turn=<?= $move; ?>"><?= $move; ?></a>
