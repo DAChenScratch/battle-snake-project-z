@@ -29,9 +29,19 @@ export class TailChase extends BaseSnake implements ISnake {
 
     private getFood(request: BTRequest): MoveDirection {
         if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
+            request.log('TailChase', 'gettingFood', {
+                blockHeads: true,
+                attackHeads: true,
+                borders: false,
+                snakeBodies: false,
+                deadEnds: false,
+            }, true);
             return moveTowardsFoodPf(request, {
                 blockHeads: true,
                 attackHeads: true,
+                borders: false,
+                snakeBodies: false,
+                deadEnds: false,
             }, true);
         }
     }
@@ -40,6 +50,9 @@ export class TailChase extends BaseSnake implements ISnake {
         return moveTowardsTail(request, {
             blockHeads: true,
             attackHeads: false,
+            borders: false,
+            snakeBodies: false,
+            deadEnds: false,
         });
     }
 

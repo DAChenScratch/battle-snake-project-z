@@ -101,9 +101,22 @@ const isNearTail = (data: BTData, x: number, y: number) => {
 export interface WeightOptions {
     blockHeads: boolean,
     attackHeads: boolean,
+    borders?: boolean,
+    snakeBodies?: boolean,
+    deadEnds?: boolean,
 }
 
 export function weight(request: BTRequest, x: number, y: number, options: WeightOptions): number {
+    if (options.borders === undefined) {
+        options.borders = true;
+    }
+    if (options.snakeBodies === undefined) {
+        options.snakeBodies = true;
+    }
+    if (options.deadEnds === undefined) {
+        options.deadEnds = true;
+    }
+
     request.grid[y][x].weight = computeWeight(request, x, y, options);
 
     let color = Math.round((request.grid[y][x].weight) / 100 * 255);
@@ -123,13 +136,11 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
 
     let result = 100;
     for (const snake of request.body.board.snakes) {
-        const body = snake.body;
-        // const body = snake.body.filter((p1, i, a) => a.findIndex(p2 => p1.x == p2.x && p1.y == p2.y) === i);
-        for (const [p, part] of body.entries()) {
+        for (const [p, part] of snake.body.entries()) {
             // Is part of snake?
             if (part.x == x && part.y == y) {
                 // Is end of snake?
-                if (p != body.length - 1) {
+                if (p != snake.body.length - 1) {
                     // Is head of snake, and head blocking?
                     if (p === 0 && !options.blockHeads) {
                         continue;
@@ -152,13 +163,15 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
     //     return 75;
     // }
 
-    if (isDeadEnd(request.body, x, y) && !isNearTail(request.body, x, y)) {
-        return 0;
-    }
+    if (options.deadEnds) {
+        if (isDeadEnd(request.body, x, y) && !isNearTail(request.body, x, y)) {
+            return 1;
+        }
 
-    const fillCount = floodFill(request, x, y);
-    if (fillCount < request.body.you.body.length) {
-        result = Math.min(result, fillCount);
+        const fillCount = floodFill(request, x, y);
+        if (fillCount < request.body.you.body.length) {
+            result = Math.min(result, fillCount);
+        }
     }
 
     if (options.attackHeads) {
@@ -176,43 +189,47 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
         }
     }
 
-    for (const snake of request.body.board.snakes) {
-        const body = snake.body;
-        for (const [p, part] of body.entries()) {
-            let tailWeight = 40;
-            if (p == body.length - 1) {
-                tailWeight = 55;
-            }
-            if (x + 1 == part.x && y == part.y) {
-                result = Math.min(result, tailWeight);
-            }
-            if (x - 1 == part.x && y == part.y) {
-                result = Math.min(result, tailWeight);
-            }
-            if (x == part.x && y + 1 == part.y) {
-                result = Math.min(result, tailWeight);
-            }
-            if (x == part.x && y - 1 == part.y) {
-                result = Math.min(result, tailWeight);
+    if (options.snakeBodies) {
+        for (const snake of request.body.board.snakes) {
+            const body = snake.body;
+            for (const [p, part] of body.entries()) {
+                let tailWeight = 40;
+                if (p == body.length - 1) {
+                    tailWeight = 55;
+                }
+                if (x + 1 == part.x && y == part.y) {
+                    result = Math.min(result, tailWeight);
+                }
+                if (x - 1 == part.x && y == part.y) {
+                    result = Math.min(result, tailWeight);
+                }
+                if (x == part.x && y + 1 == part.y) {
+                    result = Math.min(result, tailWeight);
+                }
+                if (x == part.x && y - 1 == part.y) {
+                    result = Math.min(result, tailWeight);
+                }
             }
         }
     }
 
     // Borders
-    if (x == 0) {
-        result = Math.min(result, 35);
-    }
+    if (options.borders) {
+        if (x == 0) {
+            result = Math.min(result, 35);
+        }
 
-    if (y == 0) {
-        result = Math.min(result, 35);
-    }
+        if (y == 0) {
+            result = Math.min(result, 35);
+        }
 
-    if (x == request.body.board.width - 1) {
-        result = Math.min(result, 35);
-    }
+        if (x == request.body.board.width - 1) {
+            result = Math.min(result, 35);
+        }
 
-    if (y == request.body.board.height - 1) {
-        result = Math.min(result, 35);
+        if (y == request.body.board.height - 1) {
+            result = Math.min(result, 35);
+        }
     }
 
     result = Math.min(result, 50);

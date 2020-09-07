@@ -1,4 +1,4 @@
-import { BTRequest } from '../types/BTData';
+import { BTRequest, BTXY } from '../types/BTData';
 import snakes from "../server/snakes";
 import { invertColor } from '../lib/invertColor';
 import * as Color from 'color';
@@ -71,13 +71,31 @@ export function loadGrid(request: BTRequest) {
         } else if (request.body.you.squad && request.body.you.squad == snake.squad) {
             color = '#3c69e7';
         }
+        let previousPart: BTXY;
         for (const [p, part] of snake.body.entries()) {
             const col = getCol(part.x, part.y);
             $('<div>').addClass('snake').css({
                 backgroundColor: color,
                 borderColor: new Color(color).darken(0.2).hex(),
                 borderRadius: p == 0 ? 100 : 0,
-            }).text(' ').appendTo(col);
+            }).text(p === 0 ? ' ' : getArrow(part, previousPart)).appendTo(col);
+            previousPart = part;
         }
     }
 };
+
+function getArrow(current: BTXY, previous?: BTXY) {
+    if (previous) {
+        if (current.x == previous.x - 1 && current.y == previous.y) {
+            return '→';
+        } else if (current.x == previous.x + 1 && current.y == previous.y) {
+            return '←';
+        } else if (current.x == previous.x && current.y == previous.y - 1) {
+            return '↓';
+        } else if (current.x == previous.x && current.y == previous.y + 1) {
+            return '↑';
+        }
+
+    }
+    return ' ';
+}

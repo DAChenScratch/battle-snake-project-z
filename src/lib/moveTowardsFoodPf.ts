@@ -29,10 +29,7 @@ function sortedFood(request: BTRequest, weightOptions: WeightOptions): Sorted[] 
                 food: food,
                 distance: path.distance,
                 direction: path.direction,
-                weight: weight(request, food.x, food.y, {
-                    blockHeads: true,
-                    attackHeads: true,
-                })
+                weight: weight(request, food.x, food.y, weightOptions)
             });
         }
     }
@@ -71,7 +68,7 @@ function isSquadCloser(request: BTRequest, closest: Sorted, weightOptions: Weigh
 export function moveTowardsFoodPf(request: BTRequest, weightOptions: WeightOptions, ignoreCloserSquads: boolean) {
     const sorted = sortedFood(request, weightOptions);
     if (!sorted.length) {
-        log('moveTowardsFoodPf', 'no food');
+        request.log('moveTowardsFoodPf', 'no food');
         return;
     }
     for (const closest of sorted) {
@@ -85,10 +82,10 @@ export function moveTowardsFoodPf(request: BTRequest, weightOptions: WeightOptio
             }
             // Check if squad is closer
             if (!ignoreCloserSquads || !isSquadCloser(request, closest, weightOptions)) {
-                log('moveTowardsFoodPf', closest.direction, closest.food, closest.weight, closest.distance);
+                request.log('moveTowardsFoodPf', closest.direction, closest.food, closest.weight, closest.distance);
                 return closest.direction;
             }
         }
     }
-    log('moveTowardsFoodPf', 'no options');
+    request.log('moveTowardsFoodPf', 'no options');
 }
