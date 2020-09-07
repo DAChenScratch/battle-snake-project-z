@@ -68,12 +68,13 @@ $files = array_map(function ($path) use (&$moveJson, $selectedGame, $selectedSna
             <div class="grid">
             </div>
             <div>
-                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights(blockHeads, attackHeads, snakeBodies, borders, deadEnds)">Compute weights</button>
-                <input type="checkbox" ng-model="blockHeads" /> Block heads
-                <input type="checkbox" ng-model="attackHeads" /> Attack heads
-                <input type="checkbox" ng-model="snakeBodies" /> Snake bodies
-                <input type="checkbox" ng-model="borders" /> Borders
-                <input type="checkbox" ng-model="deadEnds" /> Dead ends
+                <button type="button" class="btn btn-sm btn-primary" ng-click="recomputeWeights()">Compute weights</button>
+                <input type="checkbox" ng-model="weightOptions.blockHeads" /> Block heads
+                <input type="checkbox" ng-model="weightOptions.attackHeads" /> Attack heads
+                <input type="checkbox" ng-model="weightOptions.snakeBodies" /> Snake bodies
+                <input type="checkbox" ng-model="weightOptions.borders" /> Borders
+                <input type="checkbox" ng-model="weightOptions.deadEnds" /> Dead ends
+                <input type="checkbox" ng-model="weightOptions.avoidFood" /> Avoid food
             </div>
         </div>
         <div class="scroll">

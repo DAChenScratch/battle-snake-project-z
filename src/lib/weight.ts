@@ -1,6 +1,6 @@
 import { gridDistance } from './gridDistance';
 import { BTData, BTRequest } from '../types/BTData';
-import { isFree } from './isFree';
+import { isFree, isFood } from './isFree';
 import { cache } from './cache';
 import { isEnemy, isSquad } from './isEnemy';
 
@@ -67,6 +67,16 @@ const isDeadEnd = (data: BTData, x: number, y: number) => {
     return false;
 };
 
+const isTail = (data: BTData, x: number, y: number) => {
+    for (const snake of data.board.snakes) {
+        const part = snake.body[data.you.body.length - 1];
+        if (x == part.x && y == part.y) {
+            return true;
+        }
+    }
+    return false;
+};
+
 const isOwnTail = (data: BTData, x: number, y: number) => {
     const part = data.you.body[data.you.body.length - 1];
     if (x == part.x && y == part.y) {
@@ -104,6 +114,7 @@ export interface WeightOptions {
     borders?: boolean,
     snakeBodies?: boolean,
     deadEnds?: boolean,
+    avoidFood?: boolean,
 }
 
 export function weight(request: BTRequest, x: number, y: number, options: WeightOptions): number {
@@ -115,6 +126,9 @@ export function weight(request: BTRequest, x: number, y: number, options: Weight
     }
     if (options.deadEnds === undefined) {
         options.deadEnds = true;
+    }
+    if (options.avoidFood === undefined) {
+        options.avoidFood = false;
     }
 
     request.grid[y][x].weight = computeWeight(request, x, y, options);
@@ -149,6 +163,10 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
                     if (isSquad(request.body.you, snake, false)) {
                         continue;
                     }
+                    // Is tail stacked
+                    if (snake.body.length > 3 && p == snake.body.length - 2 && (snake.body[snake.body.length - 1].x == snake.body[snake.body.length - 2].x && snake.body[snake.body.length - 1].y == snake.body[snake.body.length - 2].y)) {
+                        continue;
+                    }
                     return 0;
                 }
             }
@@ -162,6 +180,11 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
     // if (isNearTail(request.body, x, y)) {
     //     return 75;
     // }
+    if (options.avoidFood) {
+        if (isFood(request.body, x, y)) {
+            result = Math.min(result, 30);
+        }
+    }
 
     if (options.deadEnds) {
         if (isDeadEnd(request.body, x, y) && !isNearTail(request.body, x, y)) {
