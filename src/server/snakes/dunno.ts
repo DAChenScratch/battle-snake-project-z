@@ -21,7 +21,10 @@ export class Dunno extends BaseSnake implements ISnake {
 
     public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
-        direction = moveTowardsFoodPf(request);
+        direction = moveTowardsFoodPf(request, {
+            blockHeads: true,
+            attackHeads: true,
+        }, true);
         if (!direction) {
             direction = moveAway(request);
         }

@@ -29,7 +29,10 @@ export class TailChase extends BaseSnake implements ISnake {
 
     private getFood(request: BTRequest): MoveDirection {
         if (request.body.you.health < request.body.board.width || request.body.you.health < request.body.board.height) {
-            return moveTowardsFoodPf(request);
+            return moveTowardsFoodPf(request, {
+                blockHeads: true,
+                attackHeads: true,
+            }, true);
         }
     }
 
@@ -42,7 +45,7 @@ export class TailChase extends BaseSnake implements ISnake {
 
     private runAwayRandom(request: BTRequest): MoveDirection {
         const closest = closestEnemyHead(request);
-        if (closest && closest.path.length <= 4) {
+        if (closest && closest.path.distance <= 4) {
             return smartRandomMove(request, {
                 blockHeads: true,
                 attackHeads: false,
@@ -52,7 +55,7 @@ export class TailChase extends BaseSnake implements ISnake {
 
     private runAway(request: BTRequest): MoveDirection {
         const closest = closestEnemyHead(request);
-        if (closest && closest.path.length <= 4) {
+        if (closest && closest.path.distance <= 4) {
             return moveAway(request);
         }
     }

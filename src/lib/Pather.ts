@@ -1,5 +1,5 @@
 import { weight, BLOCKED_THRESHOLD, WeightOptions } from './weight';
-import { BTData, BTXY, BTRequest } from '../types/BTData';
+import { BTRequest, BTSnake } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 
 const PF = require('pathfinding');
@@ -12,56 +12,56 @@ const pf = new PF.AStarFinder({
 const BLOCKED = 1;
 const FREE = 0;
 
-export interface Path extends Array<[number, number]> {
-
+export interface Path {
+    path: Array<[number, number]>,
+    distance: number,
+    direction: MoveDirection,
 }
 
-export class Pather {
-    private pfGrid;
-
-    constructor(
-        private request: BTRequest,
-        private weightOptions: WeightOptions,
-    ) {
-        const matrix = [];
-        const costs = [];
-        for (var y = 0; y < request.body.board.height; y++) {
-            matrix[y] = [];
-            costs[y] = [];
-            for (var x = 0; x < request.body.board.width; x++) {
-                const w = weight(request, x, y, weightOptions);
-                matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
-                costs[y][x] = 100 - w;
-            }
-        }
-        this.pfGrid = new PF.Grid(request.body.board.width, request.body.board.height, matrix, costs);
-    }
-
-    pathTo(x: number, y: number): Path {
-        return pf.findPath(this.request.body.you.body[0].x, this.request.body.you.body[0].y, x, y, this.pfGrid.clone());
-    }
-
-    pathToDirection(path) {
-        for (let i = 0; i < path.length; i++) {
-            const point = path[i];
-            if (i === 0) {
-                continue;
-            }
-            if (point[0] == this.request.body.you.body[0].x - 1 && point[1] == this.request.body.you.body[0].y) {
-                return MoveDirection.LEFT;
-            } else if (point[0] == this.request.body.you.body[0].x + 1 && point[1] == this.request.body.you.body[0].y) {
-                return MoveDirection.RIGHT;
-            } else if (point[0] == this.request.body.you.body[0].x && point[1] == this.request.body.you.body[0].y - 1) {
-                return MoveDirection.UP;
-            } else if (point[0] == this.request.body.you.body[0].x && point[1] == this.request.body.you.body[0].y + 1) {
-                return MoveDirection.DOWN;
-            }
-            break;
+export function pathTo(request: BTRequest, snake: BTSnake, x: number, y: number, weightOptions: WeightOptions): Path | null {
+    const matrix = [];
+    const costs = [];
+    for (let y = 0; y < request.body.board.height; y++) {
+        matrix[y] = [];
+        costs[y] = [];
+        for (let x = 0; x < request.body.board.width; x++) {
+            const w = weight(request, x, y, weightOptions);
+            matrix[y][x] = w > BLOCKED_THRESHOLD ? FREE : BLOCKED;
+            costs[y][x] = 100 - w;
         }
     }
-
-    pathDirection(x: number, y: number) {
-        const path = this.pathTo(x, y);
-        return this.pathToDirection(path);
+    const grid = new PF.Grid(request.body.board.width, request.body.board.height, matrix, costs);
+    const path: Array<[number, number]> = pf.findPath(snake.body[0].x, snake.body[0].y, x, y, grid);
+    if (!path || !path.length) {
+        return null;
     }
+    const direction = pathToDirection(path, snake);
+    if (!direction) {
+        return null;
+    }
+    return {
+        path,
+        direction,
+        distance: path.length,
+    }
+}
+
+function pathToDirection(path: Array<[number, number]>, snake: BTSnake): MoveDirection | null {
+    for (let i = 0; i < path.length; i++) {
+        const point = path[i];
+        if (i === 0) {
+            continue;
+        }
+        if (point[0] == snake.body[0].x - 1 && point[1] == snake.body[0].y) {
+            return MoveDirection.LEFT;
+        } else if (point[0] == snake.body[0].x + 1 && point[1] == snake.body[0].y) {
+            return MoveDirection.RIGHT;
+        } else if (point[0] == snake.body[0].x && point[1] == snake.body[0].y - 1) {
+            return MoveDirection.UP;
+        } else if (point[0] == snake.body[0].x && point[1] == snake.body[0].y + 1) {
+            return MoveDirection.DOWN;
+        }
+        break;
+    }
+    return null;
 }

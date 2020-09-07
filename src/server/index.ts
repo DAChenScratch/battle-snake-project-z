@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import { Server } from "./Server";
 import { Logger, log } from "../lib/log";
 import { Writer } from "../lib/writeFile";

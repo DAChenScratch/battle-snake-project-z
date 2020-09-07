@@ -14,7 +14,7 @@ export class WebSocketClient {
         private gameManager: GameManager,
         private scope: AngularScope,
     ) {
-        this.url = `ws://${location.host}:1${snake.port}/`;
+        this.url = `ws://${location.hostname}:1${snake.port}/`;
         this.connect();
     }
 

@@ -135,7 +135,7 @@ function computeWeight(request: BTRequest, x: number, y: number, options: Weight
                         continue;
                     }
                     // Check squad mode
-                    if (isSquad(request.body.you, snake)) {
+                    if (isSquad(request.body.you, snake, false)) {
                         continue;
                     }
                     return 0;

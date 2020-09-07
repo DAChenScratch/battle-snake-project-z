@@ -10,6 +10,7 @@
         "express": "^4.17.1",
         "morgan": "^1.10.0",
         "pathfinding": "git+https://github.com/paulrobello/PathFinding.js.git#3840d6e60b88a71c38ee5c356542b4a5883f3444",
+        "source-map-support": "^0.5.19",
         "websocket": "^1.0.32"
     },
     "devDependencies": {

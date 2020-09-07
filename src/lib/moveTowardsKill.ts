@@ -1,12 +1,9 @@
 import { log } from './log';
 import { BTData, BTRequest } from '../types/BTData';
-import { Pather } from './Pather';
+import { pathTo } from './Pather';
+import { MoveDirection } from '../types/MoveDirection';
 
-export function moveTowardsKill(request: BTRequest) {
-    const pather = new Pather(request, {
-        blockHeads: false,
-        attackHeads: true,
-    });
+export function moveTowardsKill(request: BTRequest): MoveDirection {
     const closest = {
         snake: null,
         path: null,
@@ -18,19 +15,21 @@ export function moveTowardsKill(request: BTRequest) {
         if (snake.body.length >= request.body.you.body.length) {
             continue;
         }
-        const path = pather.pathTo(snake.body[0].x, snake.body[0].y);
-        if (path.length && path.length <= 3) {
-            if (!closest.path || path.length < closest.path.length) {
+        const path = pathTo(request, request.body.you, snake.body[0].x, snake.body[0].y, {
+            blockHeads: false,
+            attackHeads: true,
+        });
+        if (path && path.distance <= 3) {
+            if (!closest.path || path.distance < closest.path.distance) {
                 closest.snake = snake;
                 closest.path = path;
             }
         }
     }
     if (closest.path) {
-        const direction = pather.pathToDirection(closest.path);
-        if (direction) {
-            request.log('moveTowardsKill', direction);
-            return direction;
+        if (closest.path.direction) {
+            request.log('moveTowardsKill', closest.path.direction);
+            return closest.path.direction;
         } else {
             request.log('moveTowardsKill', 'no direction');
         }

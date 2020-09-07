@@ -6,10 +6,9 @@ import { moveTowardsFoodPf } from '../../lib/moveTowardsFoodPf';
 import { moveTowardsEnemy } from '../../lib/moveTowardsEnemy';
 import { randomMove } from '../../lib/randomMove';
 import { smartRandomMove } from '../../lib/smartRandomMove';
-import { BaseSnake } from './base-snake';
+import { BaseSnake, StateFunction } from './base-snake';
 import { ISnake } from './snake-interface';
 import { isEnemy } from '../../lib/isEnemy';
-import { ServerMoveResponse } from '../Server';
 import { MoveDirection } from '../../types/MoveDirection';
 
 export class Tak extends BaseSnake implements ISnake {
@@ -19,8 +18,15 @@ export class Tak extends BaseSnake implements ISnake {
     public headType = HeadType.FANG;
     public tailType = TailType.FRECKLED;
 
-    public move(request: BTRequest): ServerMoveResponse | null {
-        let direction: MoveDirection;
+    protected states: StateFunction[] = [
+        this.getFoodIfSmaller,
+        moveTowardsEnemy,
+        this.getFood,
+        smartRandomMove,
+        randomMove,
+    ];
+
+    private getFoodIfSmaller(request: BTRequest): MoveDirection {
         let biggestSnake = 0;
         for (const snake of request.body.board.snakes) {
             if (!isEnemy(request.body.you, snake)) {
@@ -30,25 +36,18 @@ export class Tak extends BaseSnake implements ISnake {
                 biggestSnake = snake.body.length;
             }
         }
-        // @todo allow crossing squad (not self)
-        // @todo make ai to move to biggest free space
         if (request.body.you.health < 15 || request.body.you.body.length < biggestSnake) {
-            direction = moveTowardsFoodPf(request);
+            return moveTowardsFoodPf(request, {
+                blockHeads: true,
+                attackHeads: true,
+            }, true);
         }
-        if (!direction) {
-            direction = moveTowardsEnemy(request);
-        }
-        if (!direction) {
-            direction = moveTowardsFoodPf(request);
-        }
-        if (!direction) {
-            direction = smartRandomMove(request);
-        }
-        if (!direction) {
-            direction = randomMove(request);
-        }
-        return {
-            move: direction,
-        };
+    }
+
+    private getFood(request: BTRequest): MoveDirection {
+        return moveTowardsFoodPf(request, {
+            blockHeads: true,
+            attackHeads: true,
+        }, true);
     }
 }

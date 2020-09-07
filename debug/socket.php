@@ -40,19 +40,21 @@
                 <table class="table table-striped table-sm border">
                     <thead>
                         <tr>
-                            <th ng-show="options.showConfig"></th>
                             <th>Name</th>
-                            <!-- <th>Port</th> -->
+                            <th>Amount</th>
+                            <th>Port</th>
                             <th>Wins</th>
                             <th>Wins Percent</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="webSocketClient in webSocketClients | orderBy: '-snake.wins'">
-                            <td ng-show="options.showConfig"><input type=" number" class="form-control form-control-sm" ng-model="options.enabledSnakes[webSocketClient.snake.name]" />
-                            </td>
                             <td>{{ webSocketClient.snake.name }}</td>
-                            <!-- <td>{{ webSocketClient.snake.port }}</td> -->
+                            <td>
+                                <span ng-show="!options.showConfig">{{ options.enabledSnakes[webSocketClient.snake.name] || '' }}</span>
+                                <input ng-show="options.showConfig" type="number" step="1" class="form-control form-control-sm" ng-model="options.enabledSnakes[webSocketClient.snake.name]" />
+                            </td>
+                            <td>{{ webSocketClient.snake.port }}</td>
                             <td>{{ webSocketClient.snake.wins }}</td>
                             <td>{{ percentWins(webSocketClient.snake.wins) }}%</td>
                         </tr>

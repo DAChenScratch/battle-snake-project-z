@@ -4,7 +4,7 @@ import { BTData, BTSnake, BTRequest } from '../types/BTData';
 import { MoveDirection } from '../types/MoveDirection';
 import { shuffle } from './shuffle';
 import { gridDistance } from './gridDistance';
-import { Pather } from './Pather';
+import { pathTo } from './Pather';
 
 const closestBlocked = (request: BTRequest, sx: number, sy: number) => {
     let distance;
@@ -47,22 +47,21 @@ export function moveAway(request: BTRequest, minDistance = null) {
         distance: null,
         pathDirection: null,
     };
-    let pather = new Pather(request, {
-        blockHeads: true,
-        attackHeads: true,
-    });
     const grid = [];
     for (let y = 0; y < request.body.board.height; y++) {
         const row = [];
         for (let x = 0; x < request.body.board.width; x++) {
             row[x] = closestBlocked(request, x, y);
             if (furthestAway.distance === null || row[x] > furthestAway.distance) {
-                const pathDirection = pather.pathDirection(x, y);
-                if (pathDirection) {
+                const path = pathTo(request, request.body.you, x, y, {
+                    blockHeads: true,
+                    attackHeads: true,
+                });
+                if (path) {
                     furthestAway.x = x;
                     furthestAway.y = y;
                     furthestAway.distance = row[x];
-                    furthestAway.pathDirection = pathDirection;
+                    furthestAway.pathDirection = path.direction;
                 }
             }
         }
@@ -70,16 +69,15 @@ export function moveAway(request: BTRequest, minDistance = null) {
     }
 
     if (minDistance !== null) {
-        pather = new Pather(request, {
-            blockHeads: false,
-            attackHeads: true,
-        });
         for (const snake of request.body.board.snakes) {
             if (snake.id == request.body.you.id) {
                 continue;
             }
-            const path = pather.pathTo(snake.body[0].x, snake.body[0].y);
-            if (path.length && path.length <= minDistance) {
+            const path = pathTo(request, request.body.you, snake.body[0].x, snake.body[0].y, {
+                blockHeads: true,
+                attackHeads: true,
+            });
+            if (path && path.distance <= minDistance) {
                 request.log('moveAway', 'minDistance', furthestAway);
                 return furthestAway.pathDirection;
             }

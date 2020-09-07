@@ -21,7 +21,10 @@ export class KeepAway extends BaseSnake implements ISnake {
     public move(request: BTRequest): ServerMoveResponse | null {
         let direction;
         if (request.body.you.health < 10) {
-            direction = moveTowardsFoodPf(request);
+            direction = moveTowardsFoodPf(request, {
+                blockHeads: true,
+                attackHeads: true,
+            }, true);
         }
         if (!direction) {
             direction = moveAway(request);
